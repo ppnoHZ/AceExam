@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const indexPath = path.resolve(__dirname, '../dist/index.html');
+const indexPath = path.resolve(__dirname, '../index.html');
 const scriptTag = '<script type="module" src="./App.tsx"></script>';
 
 try {

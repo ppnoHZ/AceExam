@@ -33,14 +33,14 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Install
         run: npm install
+      - name: Modify index.html
+        run: node ./deploy/modify.cjs
       - name: Build
         run: npm run build -- --base=AceExam
         env:
           NODE_ENV: production
       - name: Build
         run: cp data.json ./dist/data.json
-      - name: Modify index.html
-        run: node ./deploy/modify.cjs
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
         with:
