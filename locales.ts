@@ -39,7 +39,7 @@ export const translations = {
     allTopics: "All Topics"
   },
   cn: {
-    appName: "AceExam 考题宝",
+    appName: "AceExam Pro",
     sequential: "顺序练习",
     shuffled: "随机乱序",
     random: "随机20题",

@@ -4,28 +4,32 @@ import { Question, ReviewMode, AppState } from './types';
 import { translations, UILang } from './locales';
 import Layout from './components/Layout';
 import QuestionDisplay from './components/QuestionDisplay';
-import { IconPlay, IconRepeat, IconChevronLeft, IconChevronRight, IconX, IconLanguages, IconDownload, IconCheck, IconTarget } from './components/Icons';
+import { IconPlay, IconRepeat, IconX, IconCheck, IconLanguages, IconChevronLeft, IconChevronRight } from './components/Icons';
 
 const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
-  const [state, setState] = useState<AppState>({
-    questions: [],
-    currentMode: 'sequence',
-    currentIndex: 0,
-    reviewOrder: [],
-    answerRecords: {},
-    showAnswerDirectly: false,
-    bilingualMode: 'both',
-    uiLanguage: (localStorage.getItem('aceexam_ui_lang') as UILang) || 'cn'
+  const [state, setState] = useState<AppState>(() => {
+    const savedRecords = localStorage.getItem('answerRecords');
+    const savedBilingual = localStorage.getItem('aceexam_bilingual');
+    const savedShowAnswer = localStorage.getItem('aceexam_show_answer');
+    
+    return {
+      questions: [],
+      currentMode: 'sequence',
+      currentIndex: 0,
+      reviewOrder: [],
+      answerRecords: savedRecords ? JSON.parse(savedRecords) : {},
+      showAnswerDirectly: savedShowAnswer === 'true',
+      bilingualMode: (savedBilingual as any) || 'both',
+      uiLanguage: (localStorage.getItem('aceexam_ui_lang') as UILang) || 'cn'
+    };
   });
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [importText, setImportText] = useState('');
   const [jumpInputValue, setJumpInputValue] = useState('1');
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   
-  const questionContainerRef = useRef<HTMLDivElement>(null);
-
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const t = translations[state.uiLanguage];
 
   const fetchQuestions = async () => {
@@ -42,9 +46,6 @@ const App: React.FC = () => {
     const init = async () => {
       try {
         const savedQuestions = localStorage.getItem('aceexam_questions');
-        const savedRecords = localStorage.getItem('aceexam_records');
-        const answerRecords = savedRecords ? JSON.parse(savedRecords) : {};
-        
         let questions: Question[] = [];
         if (savedQuestions && JSON.parse(savedQuestions).length > 0) {
           questions = JSON.parse(savedQuestions);
@@ -56,7 +57,6 @@ const App: React.FC = () => {
           ...prev,
           questions,
           reviewOrder: Array.from({ length: questions.length }, (_, i) => i),
-          answerRecords
         }));
       } catch (error) {
         console.error("Failed to load data:", error);
@@ -67,16 +67,12 @@ const App: React.FC = () => {
     init();
   }, []);
 
+  // SCROLL TO TOP ON QUESTION CHANGE
   useEffect(() => {
-    if (questionContainerRef.current) {
-      setTimeout(() => {
-        questionContainerRef.current?.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'start' 
-        });
-      }, 50);
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }, [state.currentIndex, state.reviewOrder]);
+  }, [state.currentIndex]);
 
   const allUniqueTags = useMemo(() => {
     const tagsSet = new Set<string>();
@@ -96,9 +92,11 @@ const App: React.FC = () => {
     if (state.questions.length > 0) {
       localStorage.setItem('aceexam_questions', JSON.stringify(state.questions));
     }
-    localStorage.setItem('aceexam_records', JSON.stringify(state.answerRecords));
+    localStorage.setItem('answerRecords', JSON.stringify(state.answerRecords));
     localStorage.setItem('aceexam_ui_lang', state.uiLanguage);
-  }, [state.questions, state.answerRecords, state.uiLanguage]);
+    localStorage.setItem('aceexam_bilingual', state.bilingualMode);
+    localStorage.setItem('aceexam_show_answer', state.showAnswerDirectly.toString());
+  }, [state.questions, state.answerRecords, state.uiLanguage, state.bilingualMode, state.showAnswerDirectly]);
 
   const currentQuestion = useMemo(() => {
     if (state.reviewOrder.length === 0) return null;
@@ -112,47 +110,22 @@ const App: React.FC = () => {
     setSelectedTag(tag);
 
     switch (mode) {
-      case 'sequence':
-        newOrder = Array.from({ length: qCount }, (_, i) => i);
-        break;
-      case 'shuffle':
-        newOrder = Array.from({ length: qCount }, (_, i) => i).sort(() => Math.random() - 0.5);
-        break;
-      case 'random':
-        newOrder = Array.from({ length: qCount }, (_, i) => i)
-          .sort(() => Math.random() - 0.5)
-          .slice(0, Math.min(20, qCount));
-        break;
-      case 'wrong':
-        newOrder = Array.from({ length: qCount }, (_, i) => i).filter(i => {
+      case 'sequence': newOrder = Array.from({ length: qCount }, (_, i) => i); break;
+      case 'shuffle': newOrder = Array.from({ length: qCount }, (_, i) => i).sort(() => Math.random() - 0.5); break;
+      case 'random': newOrder = Array.from({ length: qCount }, (_, i) => i).sort(() => Math.random() - 0.5).slice(0, Math.min(20, qCount)); break;
+      case 'wrong': newOrder = Array.from({ length: qCount }, (_, i) => i).filter(i => {
           const rec = state.answerRecords[state.questions[i].question_id];
           return rec && rec.incorrect > 0;
-        });
-        break;
-      case 'tags':
-        if (tag) {
-          newOrder = Array.from({ length: qCount }, (_, i) => i).filter(i => 
-            state.questions[i].tags?.includes(tag)
-          );
-        } else {
-          newOrder = Array.from({ length: qCount }, (_, i) => i);
-        }
-        break;
+        }); break;
+      case 'tags': if (tag) { newOrder = Array.from({ length: qCount }, (_, i) => i).filter(i => state.questions[i].tags?.includes(tag)); } else { newOrder = Array.from({ length: qCount }, (_, i) => i); } break;
     }
 
-    setState(prev => ({
-      ...prev,
-      currentMode: mode,
-      currentIndex: 0,
-      reviewOrder: newOrder
-    }));
+    setState(prev => ({ ...prev, currentMode: mode, currentIndex: 0, reviewOrder: newOrder }));
   };
 
   const handleNav = (dir: 'prev' | 'next') => {
     setState(prev => {
-      const newIdx = dir === 'next' 
-        ? Math.min(prev.reviewOrder.length - 1, prev.currentIndex + 1)
-        : Math.max(0, prev.currentIndex - 1);
+      const newIdx = dir === 'next' ? Math.min(prev.reviewOrder.length - 1, prev.currentIndex + 1) : Math.max(0, prev.currentIndex - 1);
       return { ...prev, currentIndex: newIdx };
     });
   };
@@ -175,10 +148,7 @@ const App: React.FC = () => {
         ...prev,
         answerRecords: {
           ...prev.answerRecords,
-          [qId]: {
-            correct: current.correct + (isCorrect ? 1 : 0),
-            incorrect: current.incorrect + (isCorrect ? 0 : 1)
-          }
+          [qId]: { correct: current.correct + (isCorrect ? 1 : 0), incorrect: current.incorrect + (isCorrect ? 0 : 1) }
         }
       };
     });
@@ -189,125 +159,80 @@ const App: React.FC = () => {
     try {
       localStorage.removeItem('aceexam_questions'); 
       const questions = await fetchQuestions();
-      setState(prev => ({
-        ...prev,
-        questions,
-        currentIndex: 0,
-        currentMode: 'sequence',
-        reviewOrder: Array.from({ length: questions.length }, (_, i) => i)
-      }));
+      setState(prev => ({ ...prev, questions, currentIndex: 0, currentMode: 'sequence', reviewOrder: Array.from({ length: questions.length }, (_, i) => i) }));
       setIsSettingsOpen(false);
-    } catch (e) {
-      alert("Sync failed");
-    }
+    } catch (e) { alert("Sync failed"); }
   };
 
   const sidebarContent = (
-    <nav className="space-y-1 px-4">
-      <h3 className="px-4 text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">{t.sequential} / {t.shuffled}</h3>
-      {[
-        { id: 'sequence', label: t.sequential, icon: <IconRepeat /> },
-        { id: 'shuffle', label: t.shuffled, icon: <IconPlay /> },
-        { id: 'random', label: t.random, icon: <IconPlay /> },
-        { id: 'wrong', label: t.mistakes, icon: <IconRepeat /> }
-      ].map((mode) => (
-        <button
-          key={mode.id}
-          onClick={() => handleModeChange(mode.id as ReviewMode)}
-          className={`
-            flex items-center gap-3 w-full px-4 py-3 rounded-2xl transition-all font-semibold text-sm mb-1
-            ${state.currentMode === mode.id && mode.id !== 'tags'
-              ? 'bg-indigo-600 text-white shadow-lg' 
-              : 'text-slate-400 hover:bg-slate-800 hover:text-white'}
-          `}
-        >
-          {mode.icon}
-          <span>{mode.label}</span>
-        </button>
-      ))}
-
-      <div className="pt-6 pb-4 border-t border-slate-800/50 mt-4">
-         <h3 className="px-4 text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">{t.topics}</h3>
-         <div className="flex flex-wrap gap-1.5 px-2 max-h-[300px] overflow-y-auto custom-scrollbar">
-            {allUniqueTags.map(tag => (
-              <button
-                key={tag}
-                onClick={() => handleModeChange('tags', tag)}
-                className={`
-                  px-2.5 py-1.5 rounded-lg text-[9px] font-black uppercase transition-all border
-                  ${selectedTag === tag && state.currentMode === 'tags'
-                    ? 'bg-indigo-600 border-indigo-500 text-white shadow-md'
-                    : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:border-slate-600'}
-                `}
-              >
-                #{tag}
+    <div className="flex flex-col h-full bg-slate-900 text-slate-300">
+      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6 custom-scrollbar-hidden">
+        <section>
+          <h3 className="text-[9px] font-black uppercase tracking-widest text-slate-600 mb-3 px-2">{t.sequential} / {t.shuffled}</h3>
+          <div className="space-y-1">
+            {[
+              { id: 'sequence', label: t.sequential, icon: <IconRepeat /> },
+              { id: 'shuffle', label: t.shuffled, icon: <IconPlay /> },
+              { id: 'random', label: t.random, icon: <IconPlay /> },
+              { id: 'wrong', label: t.mistakes, icon: <IconRepeat /> }
+            ].map((mode) => (
+              <button key={mode.id} onClick={() => handleModeChange(mode.id as ReviewMode)}
+                className={`flex items-center gap-3 w-full px-3 py-2 rounded-lg transition-all font-bold text-xs ${state.currentMode === mode.id && mode.id !== 'tags' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}>
+                {mode.icon}
+                <span>{mode.label}</span>
               </button>
             ))}
-         </div>
-      </div>
+          </div>
+        </section>
 
-      <div className="pt-6 pb-4 border-t border-slate-800/50 mt-4">
-         <h3 className="px-4 text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">{t.preferences}</h3>
-         <div className="space-y-4 px-4">
-            <label className="flex items-center gap-3 cursor-pointer group">
-              <input 
-                type="checkbox" 
-                checked={state.showAnswerDirectly}
-                onChange={(e) => setState(prev => ({ ...prev, showAnswerDirectly: e.target.checked }))}
-                className="w-4 h-4 rounded border-slate-700 bg-slate-800 text-indigo-600 focus:ring-indigo-500"
-              />
-              <span className="text-xs text-slate-400 group-hover:text-white">{t.showAnswers}</span>
-            </label>
-
-            <div className="space-y-1.5">
-              <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">{t.language}</span>
-              <div className="grid grid-cols-3 gap-1 p-1 bg-slate-800 rounded-xl">
-                {(['en', 'cn', 'both'] as const).map(lang => (
-                  <button 
-                    key={lang}
-                    onClick={() => setState(prev => ({ ...prev, bilingualMode: lang }))}
-                    className={`py-1 text-[9px] font-black rounded-lg capitalize ${state.bilingualMode === lang ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:text-white'}`}
-                  >
-                    {lang}
+        <section className="pt-4 border-t border-slate-800">
+          <h3 className="text-[9px] font-black uppercase tracking-widest text-slate-600 mb-3 px-2">{t.preferences}</h3>
+          <div className="space-y-4 px-2">
+            <div className="space-y-2">
+              <label className="text-[9px] font-bold text-slate-600 uppercase flex items-center gap-2">
+                <IconLanguages /> {t.language}
+              </label>
+              <div className="flex bg-slate-800 rounded-lg p-1 border border-slate-700">
+                {(['en', 'cn', 'both'] as const).map(m => (
+                  <button key={m} onClick={() => setState(p => ({...p, bilingualMode: m}))}
+                    className={`flex-1 py-1 rounded-md text-[9px] font-black uppercase transition-all ${state.bilingualMode === m ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}>
+                    {m === 'both' ? 'All' : m}
                   </button>
                 ))}
               </div>
             </div>
-         </div>
+
+            <div className="flex items-center justify-between group cursor-pointer select-none" onClick={() => setState(p => ({...p, showAnswerDirectly: !p.showAnswerDirectly}))}>
+               <span className="text-[10px] font-bold text-slate-500 group-hover:text-slate-200 transition-colors">{t.showAnswers}</span>
+               <div className={`w-8 h-4 rounded-full relative transition-all border ${state.showAnswerDirectly ? 'bg-indigo-600 border-indigo-500' : 'bg-slate-700 border-slate-600'}`}>
+                  <div className={`absolute top-0.5 w-2.5 h-2.5 bg-white rounded-full transition-all shadow-sm ${state.showAnswerDirectly ? 'right-0.5' : 'left-0.5'}`} />
+               </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="pt-4 border-t border-slate-800">
+           <h3 className="text-[9px] font-black uppercase tracking-widest text-slate-600 mb-3 px-2">{t.topics}</h3>
+           <div className="flex flex-wrap gap-1 px-2">
+              {allUniqueTags.map(tag => (
+                <button key={tag} onClick={() => handleModeChange('tags', tag)}
+                  className={`px-2 py-1 rounded-md text-[9px] font-bold transition-all border ${selectedTag === tag && state.currentMode === 'tags' ? 'bg-indigo-600 border-indigo-500 text-white' : 'bg-slate-800 border-slate-700 text-slate-500 hover:text-white'}`}>
+                  {tag}
+                </button>
+              ))}
+           </div>
+        </section>
       </div>
-    </nav>
+    </div>
   );
 
   if (loading) return null;
 
-  const progressPercent = state.reviewOrder.length > 0 
-    ? ((state.currentIndex + 1) / state.reviewOrder.length) * 100 
-    : 0;
-
-  // DYNAMIC COLOR ENGINE - COMPACT PATH
-  const isComplete = progressPercent === 100;
-  const getDynamicColors = () => {
-    if (isComplete) return { h: 142, s: 76, l: 45 }; // High SAT Emerald
-    if (progressPercent < 50) {
-      const ratio = progressPercent / 50;
-      return { h: 215 + (20 * ratio), s: 25 + (35 * ratio), l: 12 + (8 * ratio) };
-    } else {
-      const ratio = (progressPercent - 50) / 50;
-      return { h: 235 - (40 * ratio), s: 60 + (10 * ratio), l: 20 + (15 * ratio) };
-    }
-  };
-
-  const { h, s, l } = getDynamicColors();
-  const dynamicBg = `hsl(${h}, ${s}%, ${l}%)`;
-  const dynamicBorderColor = `hsl(${h}, 85%, 50%)`;
+  const progressPercent = state.reviewOrder.length > 0 ? ((state.currentIndex + 1) / state.reviewOrder.length) * 100 : 0;
 
   return (
-    <Layout 
-      sidebarContent={sidebarContent} 
-      onOpenSettings={() => setIsSettingsOpen(true)}
-      uiLang={state.uiLanguage}
-    >
-      <div className="pb-28 md:pb-40 pt-2" ref={questionContainerRef}>
+    <Layout ref={scrollContainerRef} sidebarContent={sidebarContent} onOpenSettings={() => setIsSettingsOpen(true)} uiLang={state.uiLanguage}>
+      <div className="pb-24 pt-1">
         {currentQuestion ? (
           <QuestionDisplay 
             question={currentQuestion}
@@ -318,104 +243,69 @@ const App: React.FC = () => {
             uiLang={state.uiLanguage}
           />
         ) : (
-          <div className="text-center py-16 bg-white rounded-3xl border border-slate-100 px-8 shadow-sm flex flex-col items-center animate-in zoom-in-95 duration-500">
-            <div className="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mb-4 text-indigo-500">
-               <IconCheck />
-            </div>
-            <h3 className="text-xl font-black text-slate-900 mb-2">{t.noMistakes}</h3>
-            <p className="text-slate-500 text-sm max-w-xs mx-auto mb-8">{t.noMistakesDesc}</p>
-            <button 
-              onClick={() => handleModeChange('sequence')}
-              className="px-8 py-3 bg-indigo-600 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-indigo-100 hover:shadow-indigo-200"
-            >
-              {t.restart}
-            </button>
+          <div className="text-center py-12 bg-white rounded-3xl border border-slate-200 px-6 shadow-sm flex flex-col items-center">
+            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4 text-emerald-600 text-3xl"><IconCheck /></div>
+            <h3 className="text-lg font-black text-slate-900 mb-1">{t.noMistakes}</h3>
+            <p className="text-slate-500 text-xs mb-8 max-w-sm">{t.noMistakesDesc}</p>
+            <button onClick={() => handleModeChange('sequence')} className="px-8 py-3 bg-slate-900 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-600 transition-all active:scale-95">{t.restart}</button>
           </div>
         )}
       </div>
 
-      {/* Floating Action Bar - Ultra Compact */}
       {state.reviewOrder.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 p-3 md:p-5 lg:left-[280px] z-40 bg-gradient-to-t from-slate-50 via-slate-50/70 to-transparent pointer-events-none">
-          <div className="max-w-md mx-auto relative pointer-events-auto">
-            <div className="relative overflow-hidden flex items-center gap-1 bg-white/95 backdrop-blur-3xl p-1 rounded-[1.75rem] shadow-[0_20px_40px_-10px_rgba(0,0,0,0.1)] border border-white">
-              
-              <button 
-                onClick={() => handleNav('prev')}
-                disabled={state.currentIndex === 0}
-                className="shrink-0 p-3 text-slate-400 hover:text-indigo-600 bg-slate-50 hover:bg-white rounded-full disabled:opacity-5 active:scale-90 transition-all"
-              >
-                <IconChevronLeft />
-              </button>
-              
-              <div className="flex-1 flex flex-col items-center justify-center min-w-0">
-                <div className={`relative p-[2px] rounded-lg overflow-hidden transition-all duration-700 ${isComplete ? 'scale-105' : ''}`}>
-                  <div 
-                    className={`absolute inset-0 transition-all duration-700 ${isComplete ? 'animate-pulse' : ''}`}
-                    style={{ 
-                      background: `conic-gradient(from 0deg, ${dynamicBorderColor} ${progressPercent}%, #0f172a ${progressPercent}%)`,
-                      filter: `drop-shadow(0 0 4px ${dynamicBorderColor}66)`
-                    }}
-                  />
-                  <div 
-                    className="relative flex items-center gap-1.5 px-3 py-1.5 md:py-2 rounded-md border border-white/5 overflow-hidden transition-all duration-700"
-                    style={{ backgroundColor: dynamicBg }}
-                  >
-                    <input 
-                      type="text"
-                      value={jumpInputValue}
-                      onChange={(e) => setJumpInputValue(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && handleJump()}
-                      onBlur={handleJump}
-                      className="w-8 md:w-10 bg-transparent text-center text-sm md:text-base font-black text-white border-none focus:ring-0 p-0"
-                    />
-                    <span className="text-[10px] md:text-xs font-black text-white/50">/ {state.reviewOrder.length}</span>
-                  </div>
-                </div>
-              </div>
+        <div className="fixed bottom-6 left-0 right-0 px-4 md:px-0 lg:left-[280px] z-40 flex justify-center pointer-events-none">
+          <div className="pointer-events-auto flex items-center bg-white p-1.5 rounded-xl shadow-xl border border-slate-200">
+            <button onClick={() => handleNav('prev')} disabled={state.currentIndex === 0}
+              className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:bg-slate-50 rounded-lg disabled:opacity-10 transition-all">
+              <IconChevronLeft />
+            </button>
 
-              <button 
-                onClick={() => handleNav('next')}
-                disabled={state.currentIndex === state.reviewOrder.length - 1}
-                className={`shrink-0 min-w-0 py-3 md:py-4 px-5 md:px-8 rounded-2xl disabled:opacity-20 flex items-center justify-center shadow-lg transition-all active:scale-95 ${isComplete ? 'bg-emerald-500 shadow-emerald-100' : 'bg-indigo-600 shadow-indigo-100 hover:bg-indigo-700'}`}
-              >
-                <span className="font-black text-[10px] uppercase tracking-widest text-white">{t.next}</span>
-                <IconChevronRight />
-              </button>
+            <div className="px-6 flex flex-col items-center justify-center min-w-[130px]">
+               <div className="flex items-baseline gap-1 mb-1">
+                  <input type="text" value={jumpInputValue}
+                    onChange={(e) => setJumpInputValue(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleJump()}
+                    onBlur={handleJump}
+                    className="w-10 bg-slate-50 text-center text-xs font-black text-slate-900 border border-slate-200 rounded p-0.5 transition-all"
+                  />
+                  <span className="text-[8px] font-black text-slate-400 tracking-tighter">/ {state.reviewOrder.length}</span>
+               </div>
+               <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="h-full bg-indigo-600 transition-all duration-300" style={{ width: `${progressPercent}%` }} />
+               </div>
             </div>
+
+            <button onClick={() => handleNav('next')} disabled={state.currentIndex === state.reviewOrder.length - 1}
+              className={`w-10 h-10 flex items-center justify-center rounded-lg transition-all shadow-sm active:scale-95 ${progressPercent === 100 ? 'bg-emerald-600 text-white' : 'bg-indigo-600 text-white'}`}>
+              <IconChevronRight />
+            </button>
           </div>
         </div>
       )}
 
-      {/* Settings Modal - Compact */}
       {isSettingsOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 animate-in fade-in duration-300">
           <div className="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl border border-slate-100">
-            <div className="p-5 border-b border-slate-50 flex items-center justify-between">
-              <h2 className="text-base font-black text-slate-900">{t.settings}</h2>
-              <button onClick={() => setIsSettingsOpen(false)} className="p-2 text-slate-300 hover:bg-slate-50 rounded-full transition-colors"><IconX /></button>
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+              <h2 className="text-sm font-black text-slate-900 uppercase tracking-tight">{t.settings}</h2>
+              <button onClick={() => setIsSettingsOpen(false)} className="p-1.5 text-slate-400 hover:bg-white hover:text-slate-600 hover:shadow-sm rounded-full transition-all border border-transparent hover:border-slate-100"><IconX /></button>
             </div>
-            <div className="p-5 space-y-5 max-h-[60vh] overflow-y-auto custom-scrollbar">
-              <div className="space-y-2">
-                <span className="text-[9px] text-slate-400 font-black uppercase tracking-widest">{t.uiLanguage}</span>
-                <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl">
-                  {(['en', 'cn'] as const).map(lang => (
-                    <button 
-                      key={lang}
-                      onClick={() => setState(prev => ({ ...prev, uiLanguage: lang }))}
-                      className={`py-2 text-xs font-black rounded-lg ${state.uiLanguage === lang ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400'}`}
-                    >
-                      {lang === 'cn' ? '中文' : 'EN'}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <button 
-                onClick={handleSyncFromDataJson}
-                className="w-full py-2.5 px-4 bg-indigo-50 text-indigo-700 rounded-xl font-black text-[10px] uppercase tracking-widest border border-indigo-100"
-              >
-                {t.syncDb}
+            <div className="p-8 space-y-4">
+               <div className="grid grid-cols-2 gap-3">
+                  <button onClick={() => setState(p => ({...p, uiLanguage: p.uiLanguage === 'cn' ? 'en' : 'cn'}))}
+                    className="flex flex-col items-center gap-3 p-5 bg-slate-50 border border-slate-200 rounded-2xl hover:border-indigo-400 hover:bg-indigo-50 transition-all group">
+                    <div className="text-slate-400 group-hover:text-indigo-600"><IconLanguages /></div>
+                    <span className="text-[9px] font-black uppercase text-slate-500 tracking-wider">{t.uiLanguage}: {state.uiLanguage === 'cn' ? '中' : 'EN'}</span>
+                  </button>
+                  <button onClick={handleSyncFromDataJson}
+                    className="flex flex-col items-center gap-3 p-5 bg-slate-50 border border-slate-200 rounded-2xl hover:border-indigo-400 hover:bg-indigo-50 transition-all group">
+                    <div className="text-slate-400 group-hover:text-indigo-600"><IconRepeat /></div>
+                    <span className="text-[9px] font-black uppercase text-slate-500 tracking-wider">{t.syncDb}</span>
+                  </button>
+               </div>
+               <button onClick={() => { if(confirm(t.resetConfirm)) { localStorage.clear(); window.location.reload(); } }} 
+                className="w-full py-4 bg-rose-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-rose-700 transition-all mt-2">
+                {t.reset}
               </button>
             </div>
           </div>
