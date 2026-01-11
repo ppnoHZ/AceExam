@@ -37,6 +37,8 @@ jobs:
         run: npm run build -- --base=AceExam
         env:
           NODE_ENV: production
+      - name: Build
+        run: cp data.json ./dist/data.json
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
         with:
