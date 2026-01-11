@@ -215,7 +215,7 @@ const App: React.FC = () => {
           key={mode.id}
           onClick={() => handleModeChange(mode.id as ReviewMode)}
           className={`
-            flex items-center gap-3 w-full px-4 py-3.5 rounded-2xl transition-all font-semibold text-sm mb-1
+            flex items-center gap-3 w-full px-4 py-3 rounded-2xl transition-all font-semibold text-sm mb-1
             ${state.currentMode === mode.id && mode.id !== 'tags'
               ? 'bg-indigo-600 text-white shadow-lg' 
               : 'text-slate-400 hover:bg-slate-800 hover:text-white'}
@@ -226,26 +226,15 @@ const App: React.FC = () => {
         </button>
       ))}
 
-      <div className="pt-8 pb-4 border-t border-slate-800/50 mt-6">
+      <div className="pt-6 pb-4 border-t border-slate-800/50 mt-4">
          <h3 className="px-4 text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">{t.topics}</h3>
-         <div className="flex flex-wrap gap-2 px-2 max-h-[380px] overflow-y-auto custom-scrollbar">
-            <button
-              onClick={() => handleModeChange('sequence')}
-              className={`
-                px-3 py-2 rounded-xl text-[10px] font-bold uppercase transition-all border
-                ${state.currentMode === 'sequence' 
-                  ? 'bg-indigo-600 border-indigo-500 text-white shadow-md'
-                  : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:border-slate-600'}
-              `}
-            >
-              {t.allTopics}
-            </button>
+         <div className="flex flex-wrap gap-1.5 px-2 max-h-[300px] overflow-y-auto custom-scrollbar">
             {allUniqueTags.map(tag => (
               <button
                 key={tag}
                 onClick={() => handleModeChange('tags', tag)}
                 className={`
-                  px-3 py-2 rounded-xl text-[10px] font-bold uppercase transition-all border
+                  px-2.5 py-1.5 rounded-lg text-[9px] font-black uppercase transition-all border
                   ${selectedTag === tag && state.currentMode === 'tags'
                     ? 'bg-indigo-600 border-indigo-500 text-white shadow-md'
                     : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white hover:border-slate-600'}
@@ -257,27 +246,27 @@ const App: React.FC = () => {
          </div>
       </div>
 
-      <div className="pt-8 pb-4 border-t border-slate-800/50 mt-6">
-         <h3 className="px-4 text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">{t.preferences}</h3>
-         <div className="space-y-6 px-4">
+      <div className="pt-6 pb-4 border-t border-slate-800/50 mt-4">
+         <h3 className="px-4 text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">{t.preferences}</h3>
+         <div className="space-y-4 px-4">
             <label className="flex items-center gap-3 cursor-pointer group">
               <input 
                 type="checkbox" 
                 checked={state.showAnswerDirectly}
                 onChange={(e) => setState(prev => ({ ...prev, showAnswerDirectly: e.target.checked }))}
-                className="w-5 h-5 rounded border-slate-700 bg-slate-800 text-indigo-600 focus:ring-indigo-500"
+                className="w-4 h-4 rounded border-slate-700 bg-slate-800 text-indigo-600 focus:ring-indigo-500"
               />
-              <span className="text-sm text-slate-300 group-hover:text-white">{t.showAnswers}</span>
+              <span className="text-xs text-slate-400 group-hover:text-white">{t.showAnswers}</span>
             </label>
 
-            <div className="space-y-2">
-              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{t.language}</span>
+            <div className="space-y-1.5">
+              <span className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">{t.language}</span>
               <div className="grid grid-cols-3 gap-1 p-1 bg-slate-800 rounded-xl">
                 {(['en', 'cn', 'both'] as const).map(lang => (
                   <button 
                     key={lang}
                     onClick={() => setState(prev => ({ ...prev, bilingualMode: lang }))}
-                    className={`py-1.5 text-[10px] font-black rounded-lg capitalize ${state.bilingualMode === lang ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
+                    className={`py-1 text-[9px] font-black rounded-lg capitalize ${state.bilingualMode === lang ? 'bg-indigo-600 text-white' : 'text-slate-500 hover:text-white'}`}
                   >
                     {lang}
                   </button>
@@ -295,32 +284,22 @@ const App: React.FC = () => {
     ? ((state.currentIndex + 1) / state.reviewOrder.length) * 100 
     : 0;
 
-  // REFINED COLOR ENGINE
-  // 0% -> Slate (215), 50% -> Indigo (235), 100% -> Emerald (142)
+  // DYNAMIC COLOR ENGINE - COMPACT PATH
   const isComplete = progressPercent === 100;
-  
   const getDynamicColors = () => {
+    if (isComplete) return { h: 142, s: 76, l: 45 }; // High SAT Emerald
     if (progressPercent < 50) {
-      // Transition from Slate to Indigo
       const ratio = progressPercent / 50;
-      const h = 215 + (20 * ratio); // 215 to 235
-      const s = 25 + (35 * ratio); // 25 to 60
-      const l = 12 + (8 * ratio);  // 12 to 20
-      return { h, s, l };
+      return { h: 215 + (20 * ratio), s: 25 + (35 * ratio), l: 12 + (8 * ratio) };
     } else {
-      // Transition from Indigo to Emerald
       const ratio = (progressPercent - 50) / 50;
-      const h = 235 - (93 * ratio); // 235 down to 142
-      const s = 60 + (16 * ratio);  // 60 to 76
-      const l = 20 + (10 * ratio);  // 20 to 30 (lighten for green)
-      return { h, s, l };
+      return { h: 235 - (40 * ratio), s: 60 + (10 * ratio), l: 20 + (15 * ratio) };
     }
   };
 
   const { h, s, l } = getDynamicColors();
   const dynamicBg = `hsl(${h}, ${s}%, ${l}%)`;
   const dynamicBorderColor = `hsl(${h}, 85%, 50%)`;
-  const shadowAlpha = 0.4 + (progressPercent / 200);
 
   return (
     <Layout 
@@ -328,7 +307,7 @@ const App: React.FC = () => {
       onOpenSettings={() => setIsSettingsOpen(true)}
       uiLang={state.uiLanguage}
     >
-      <div className="pb-40 md:pb-56 pt-6" ref={questionContainerRef}>
+      <div className="pb-28 md:pb-40 pt-2" ref={questionContainerRef}>
         {currentQuestion ? (
           <QuestionDisplay 
             question={currentQuestion}
@@ -339,19 +318,15 @@ const App: React.FC = () => {
             uiLang={state.uiLanguage}
           />
         ) : (
-          <div className="text-center py-24 bg-white rounded-[3rem] border border-slate-100 px-8 shadow-sm flex flex-col items-center animate-in zoom-in-95 duration-500">
-            <div className="w-24 h-24 bg-indigo-50 rounded-full flex items-center justify-center mb-8 text-indigo-500">
-               {state.currentMode === 'wrong' ? <IconCheck /> : <IconRepeat />}
+          <div className="text-center py-16 bg-white rounded-3xl border border-slate-100 px-8 shadow-sm flex flex-col items-center animate-in zoom-in-95 duration-500">
+            <div className="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mb-4 text-indigo-500">
+               <IconCheck />
             </div>
-            <h3 className="text-3xl font-black text-slate-900 mb-4">
-              {state.currentMode === 'wrong' ? t.noMistakes : t.noItems}
-            </h3>
-            <p className="text-slate-500 text-lg max-w-md mx-auto mb-12 leading-relaxed">
-              {state.currentMode === 'wrong' ? t.noMistakesDesc : t.noItemsDesc}
-            </p>
+            <h3 className="text-xl font-black text-slate-900 mb-2">{t.noMistakes}</h3>
+            <p className="text-slate-500 text-sm max-w-xs mx-auto mb-8">{t.noMistakesDesc}</p>
             <button 
               onClick={() => handleModeChange('sequence')}
-              className="px-12 py-5 bg-indigo-600 text-white rounded-[1.5rem] font-black shadow-2xl shadow-indigo-200 transition-all hover:-translate-y-1 hover:shadow-indigo-300 active:scale-95"
+              className="px-8 py-3 bg-indigo-600 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-indigo-100 hover:shadow-indigo-200"
             >
               {t.restart}
             </button>
@@ -359,67 +334,52 @@ const App: React.FC = () => {
         )}
       </div>
 
-      {/* Floating Action Bar */}
+      {/* Floating Action Bar - Ultra Compact */}
       {state.reviewOrder.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 p-4 md:p-8 lg:left-[280px] z-40 bg-gradient-to-t from-slate-50 via-slate-50/80 to-transparent pointer-events-none">
-          <div className="max-w-xl mx-auto relative group pointer-events-auto">
-            {/* Navigation Pill */}
-            <div className="relative overflow-hidden flex items-center flex-nowrap gap-1 md:gap-2 bg-white/95 backdrop-blur-3xl p-1.5 md:p-2.5 rounded-[2.5rem] shadow-[0_40px_80px_-15px_rgba(0,0,0,0.2)] border border-white">
+        <div className="fixed bottom-0 left-0 right-0 p-3 md:p-5 lg:left-[280px] z-40 bg-gradient-to-t from-slate-50 via-slate-50/70 to-transparent pointer-events-none">
+          <div className="max-w-md mx-auto relative pointer-events-auto">
+            <div className="relative overflow-hidden flex items-center gap-1 bg-white/95 backdrop-blur-3xl p-1 rounded-[1.75rem] shadow-[0_20px_40px_-10px_rgba(0,0,0,0.1)] border border-white">
               
               <button 
                 onClick={() => handleNav('prev')}
                 disabled={state.currentIndex === 0}
-                className="shrink-0 p-4 md:p-6 text-slate-400 hover:text-indigo-600 bg-slate-50 hover:bg-white rounded-full disabled:opacity-5 transition-all active:scale-90 border border-transparent hover:border-slate-100"
+                className="shrink-0 p-3 text-slate-400 hover:text-indigo-600 bg-slate-50 hover:bg-white rounded-full disabled:opacity-5 active:scale-90 transition-all"
               >
                 <IconChevronLeft />
               </button>
               
-              <div className="flex-1 flex flex-col items-center justify-center px-1 min-w-0">
-                {/* Progress Border Wrapper */}
-                <div className={`relative p-[3px] rounded-2xl overflow-hidden transition-all duration-1000 ${isComplete ? 'scale-110' : ''}`}>
-                  {/* The actual progress border using conic-gradient */}
+              <div className="flex-1 flex flex-col items-center justify-center min-w-0">
+                <div className={`relative p-[2px] rounded-lg overflow-hidden transition-all duration-700 ${isComplete ? 'scale-105' : ''}`}>
                   <div 
-                    className={`absolute inset-0 transition-all duration-1000 ${isComplete ? 'animate-pulse' : ''}`}
+                    className={`absolute inset-0 transition-all duration-700 ${isComplete ? 'animate-pulse' : ''}`}
                     style={{ 
-                      background: `conic-gradient(from 0deg, ${dynamicBorderColor} ${progressPercent}%, #1e293b ${progressPercent}%)`,
-                      filter: `drop-shadow(0 0 10px ${dynamicBorderColor}${Math.floor(shadowAlpha * 100)})`
+                      background: `conic-gradient(from 0deg, ${dynamicBorderColor} ${progressPercent}%, #0f172a ${progressPercent}%)`,
+                      filter: `drop-shadow(0 0 4px ${dynamicBorderColor}66)`
                     }}
                   />
-                  {/* Main Input Content with DYNAMIC COLOR ENGINE */}
                   <div 
-                    className="relative flex items-center gap-1 md:gap-3 px-4 md:px-6 py-2.5 md:py-3.5 rounded-[0.9rem] border border-white/10 max-w-full overflow-hidden transition-all duration-1000"
+                    className="relative flex items-center gap-1.5 px-3 py-1.5 md:py-2 rounded-md border border-white/5 overflow-hidden transition-all duration-700"
                     style={{ backgroundColor: dynamicBg }}
                   >
-                    <span className={`${isComplete ? 'text-white' : 'text-white/40'} shrink-0 transition-colors`}><IconTarget /></span>
                     <input 
                       type="text"
                       value={jumpInputValue}
                       onChange={(e) => setJumpInputValue(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleJump()}
                       onBlur={handleJump}
-                      className="w-10 md:w-16 bg-transparent text-center text-sm md:text-xl font-black text-white border-none focus:ring-0 p-0"
+                      className="w-8 md:w-10 bg-transparent text-center text-sm md:text-base font-black text-white border-none focus:ring-0 p-0"
                     />
-                    <div className="flex flex-col -gap-1">
-                       <span className={`text-[8px] md:text-[10px] font-black ${isComplete ? 'text-white' : 'text-white/40'} uppercase tracking-tighter shrink-0 transition-colors`}>
-                        {t.of}
-                      </span>
-                      <span className="text-[10px] md:text-xs font-black text-white shrink-0">
-                        {state.reviewOrder.length}
-                      </span>
-                    </div>
+                    <span className="text-[10px] md:text-xs font-black text-white/50">/ {state.reviewOrder.length}</span>
                   </div>
                 </div>
-                <span className={`text-[7px] md:text-[8px] font-black uppercase tracking-[0.25em] mt-1.5 shrink-0 transition-colors ${isComplete ? 'text-emerald-600' : 'text-slate-400'}`}>
-                  {isComplete ? 'COMPLETED' : t.jumpTo}
-                </span>
               </div>
 
               <button 
                 onClick={() => handleNav('next')}
                 disabled={state.currentIndex === state.reviewOrder.length - 1}
-                className={`shrink-0 min-w-0 py-4 md:py-6 px-6 md:px-10 rounded-[2rem] disabled:opacity-20 flex items-center justify-center gap-2 md:gap-3 shadow-xl transition-all active:scale-95 ${isComplete ? 'bg-emerald-600 shadow-emerald-200' : 'bg-indigo-600 shadow-indigo-200 hover:bg-indigo-700 hover:translate-x-0.5'}`}
+                className={`shrink-0 min-w-0 py-3 md:py-4 px-5 md:px-8 rounded-2xl disabled:opacity-20 flex items-center justify-center shadow-lg transition-all active:scale-95 ${isComplete ? 'bg-emerald-500 shadow-emerald-100' : 'bg-indigo-600 shadow-indigo-100 hover:bg-indigo-700'}`}
               >
-                <span className="font-black text-[10px] md:text-xs uppercase tracking-widest whitespace-nowrap text-white">{t.next}</span>
+                <span className="font-black text-[10px] uppercase tracking-widest text-white">{t.next}</span>
                 <IconChevronRight />
               </button>
             </div>
@@ -427,90 +387,36 @@ const App: React.FC = () => {
         </div>
       )}
 
-      {/* Settings Modal */}
+      {/* Settings Modal - Compact */}
       {isSettingsOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
-          <div className="bg-white rounded-[3rem] w-full max-w-lg overflow-hidden shadow-3xl border border-slate-100 animate-in zoom-in-95 duration-200">
-            <div className="p-8 border-b border-slate-50 flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-black text-slate-900">{t.settings}</h2>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1">Application Preferences & Data</p>
-              </div>
-              <button onClick={() => setIsSettingsOpen(false)} className="p-3 text-slate-300 hover:bg-slate-50 rounded-full transition-colors"><IconX /></button>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl border border-slate-100">
+            <div className="p-5 border-b border-slate-50 flex items-center justify-between">
+              <h2 className="text-base font-black text-slate-900">{t.settings}</h2>
+              <button onClick={() => setIsSettingsOpen(false)} className="p-2 text-slate-300 hover:bg-slate-50 rounded-full transition-colors"><IconX /></button>
             </div>
-            <div className="p-8 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
-              <div className="space-y-3">
-                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest flex items-center gap-2">
-                  <IconLanguages /> {t.uiLanguage}
-                </span>
-                <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-2xl">
+            <div className="p-5 space-y-5 max-h-[60vh] overflow-y-auto custom-scrollbar">
+              <div className="space-y-2">
+                <span className="text-[9px] text-slate-400 font-black uppercase tracking-widest">{t.uiLanguage}</span>
+                <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl">
                   {(['en', 'cn'] as const).map(lang => (
                     <button 
                       key={lang}
                       onClick={() => setState(prev => ({ ...prev, uiLanguage: lang }))}
-                      className={`py-3 text-sm font-black rounded-xl uppercase transition-all ${state.uiLanguage === lang ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                      className={`py-2 text-xs font-black rounded-lg ${state.uiLanguage === lang ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400'}`}
                     >
-                      {lang === 'cn' ? '简体中文' : 'English'}
+                      {lang === 'cn' ? '中文' : 'EN'}
                     </button>
                   ))}
                 </div>
               </div>
 
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100"></div></div>
-                <div className="relative flex justify-center text-[10px] font-black uppercase text-slate-300"><span className="bg-white px-2">{t.dataManagement}</span></div>
-              </div>
-
-              <div className="space-y-4">
-                <button 
-                  onClick={handleSyncFromDataJson}
-                  className="w-full py-4 px-6 bg-indigo-50 text-indigo-700 rounded-2xl font-black text-sm flex items-center justify-center gap-3 border border-indigo-100 transition-all hover:bg-indigo-100 active:scale-[0.98]"
-                >
-                  <IconRepeat />
-                  {t.syncDb}
-                </button>
-
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{t.importJson}</span>
-                  </div>
-                  <textarea 
-                    value={importText}
-                    onChange={(e) => setImportText(e.target.value)}
-                    placeholder='[{"question_id": 1, ...}]'
-                    className="w-full h-32 p-4 bg-slate-50 border border-slate-200 rounded-2xl font-mono text-[10px] outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
-                  />
-                </div>
-                
-                <div className="flex gap-3">
-                  <button 
-                    onClick={() => {
-                      if(confirm(t.resetConfirm)) {
-                        localStorage.clear();
-                        window.location.reload();
-                      }
-                    }}
-                    className="flex-1 py-4 text-rose-500 font-bold hover:bg-rose-50 rounded-2xl text-xs uppercase tracking-widest transition-colors"
-                  >
-                    {t.reset}
-                  </button>
-                  <button 
-                    onClick={() => {
-                      try {
-                        const parsed = JSON.parse(importText);
-                        if (Array.isArray(parsed)) {
-                          setState(prev => ({ ...prev, questions: parsed, currentIndex: 0, reviewOrder: Array.from({ length: parsed.length }, (_, i) => i) }));
-                          setIsSettingsOpen(false);
-                          setImportText('');
-                        }
-                      } catch (e) { alert("Invalid JSON"); }
-                    }}
-                    className="flex-[2] py-4 bg-slate-900 text-white font-black rounded-2xl text-xs uppercase tracking-widest shadow-xl active:scale-[0.98] transition-all"
-                  >
-                    {t.importDb}
-                  </button>
-                </div>
-              </div>
+              <button 
+                onClick={handleSyncFromDataJson}
+                className="w-full py-2.5 px-4 bg-indigo-50 text-indigo-700 rounded-xl font-black text-[10px] uppercase tracking-widest border border-indigo-100"
+              >
+                {t.syncDb}
+              </button>
             </div>
           </div>
         </div>
