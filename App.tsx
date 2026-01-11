@@ -295,13 +295,32 @@ const App: React.FC = () => {
     ? ((state.currentIndex + 1) / state.reviewOrder.length) * 100 
     : 0;
 
-  // Calculate dynamic colors based on progress
-  // Hue: 220 (Slate Blue) to 140 (Emerald Green)
-  const dynamicHue = 220 - (progressPercent * 0.8);
-  const dynamicSaturation = 30 + (progressPercent * 0.5);
-  const dynamicLightness = 10 + (progressPercent * 0.2);
-  const dynamicBg = `hsl(${dynamicHue}, ${dynamicSaturation}%, ${dynamicLightness}%)`;
-  const dynamicBorderColor = `hsl(${dynamicHue}, 80%, 50%)`;
+  // REFINED COLOR ENGINE
+  // 0% -> Slate (215), 50% -> Indigo (235), 100% -> Emerald (142)
+  const isComplete = progressPercent === 100;
+  
+  const getDynamicColors = () => {
+    if (progressPercent < 50) {
+      // Transition from Slate to Indigo
+      const ratio = progressPercent / 50;
+      const h = 215 + (20 * ratio); // 215 to 235
+      const s = 25 + (35 * ratio); // 25 to 60
+      const l = 12 + (8 * ratio);  // 12 to 20
+      return { h, s, l };
+    } else {
+      // Transition from Indigo to Emerald
+      const ratio = (progressPercent - 50) / 50;
+      const h = 235 - (93 * ratio); // 235 down to 142
+      const s = 60 + (16 * ratio);  // 60 to 76
+      const l = 20 + (10 * ratio);  // 20 to 30 (lighten for green)
+      return { h, s, l };
+    }
+  };
+
+  const { h, s, l } = getDynamicColors();
+  const dynamicBg = `hsl(${h}, ${s}%, ${l}%)`;
+  const dynamicBorderColor = `hsl(${h}, 85%, 50%)`;
+  const shadowAlpha = 0.4 + (progressPercent / 200);
 
   return (
     <Layout 
@@ -357,45 +376,50 @@ const App: React.FC = () => {
               
               <div className="flex-1 flex flex-col items-center justify-center px-1 min-w-0">
                 {/* Progress Border Wrapper */}
-                <div className="relative p-[2px] rounded-2xl overflow-hidden transition-all duration-700">
+                <div className={`relative p-[3px] rounded-2xl overflow-hidden transition-all duration-1000 ${isComplete ? 'scale-110' : ''}`}>
                   {/* The actual progress border using conic-gradient */}
                   <div 
-                    className="absolute inset-0 transition-all duration-700"
+                    className={`absolute inset-0 transition-all duration-1000 ${isComplete ? 'animate-pulse' : ''}`}
                     style={{ 
                       background: `conic-gradient(from 0deg, ${dynamicBorderColor} ${progressPercent}%, #1e293b ${progressPercent}%)`,
-                      filter: `drop-shadow(0 0 6px ${dynamicBorderColor}80)`
+                      filter: `drop-shadow(0 0 10px ${dynamicBorderColor}${Math.floor(shadowAlpha * 100)})`
                     }}
                   />
-                  {/* Main Input Content with DYNAMIC BACKGROUND */}
+                  {/* Main Input Content with DYNAMIC COLOR ENGINE */}
                   <div 
-                    className="relative flex items-center gap-1 md:gap-2 px-3 md:px-5 py-2 md:py-2.5 rounded-[0.9rem] border border-slate-800/30 max-w-full overflow-hidden transition-all duration-700"
+                    className="relative flex items-center gap-1 md:gap-3 px-4 md:px-6 py-2.5 md:py-3.5 rounded-[0.9rem] border border-white/10 max-w-full overflow-hidden transition-all duration-1000"
                     style={{ backgroundColor: dynamicBg }}
                   >
-                    <span className="text-white/40 shrink-0"><IconTarget /></span>
+                    <span className={`${isComplete ? 'text-white' : 'text-white/40'} shrink-0 transition-colors`}><IconTarget /></span>
                     <input 
                       type="text"
                       value={jumpInputValue}
                       onChange={(e) => setJumpInputValue(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleJump()}
                       onBlur={handleJump}
-                      className="w-8 md:w-12 bg-transparent text-center text-xs md:text-base font-black text-white border-none focus:ring-0 p-0"
+                      className="w-10 md:w-16 bg-transparent text-center text-sm md:text-xl font-black text-white border-none focus:ring-0 p-0"
                     />
-                    <span className="text-[10px] md:text-xs font-bold text-white/40 uppercase tracking-tighter shrink-0">
-                      / {state.reviewOrder.length}
-                    </span>
+                    <div className="flex flex-col -gap-1">
+                       <span className={`text-[8px] md:text-[10px] font-black ${isComplete ? 'text-white' : 'text-white/40'} uppercase tracking-tighter shrink-0 transition-colors`}>
+                        {t.of}
+                      </span>
+                      <span className="text-[10px] md:text-xs font-black text-white shrink-0">
+                        {state.reviewOrder.length}
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <span className="text-[7px] md:text-[8px] font-black text-slate-400 uppercase tracking-[0.25em] mt-1.5 shrink-0">
-                  {t.jumpTo}
+                <span className={`text-[7px] md:text-[8px] font-black uppercase tracking-[0.25em] mt-1.5 shrink-0 transition-colors ${isComplete ? 'text-emerald-600' : 'text-slate-400'}`}>
+                  {isComplete ? 'COMPLETED' : t.jumpTo}
                 </span>
               </div>
 
               <button 
                 onClick={() => handleNav('next')}
                 disabled={state.currentIndex === state.reviewOrder.length - 1}
-                className="shrink-0 min-w-0 py-4 md:py-6 px-6 md:px-10 bg-indigo-600 text-white rounded-[2rem] disabled:opacity-20 flex items-center justify-center gap-2 md:gap-3 shadow-xl shadow-indigo-200 hover:bg-indigo-700 hover:translate-x-0.5 transition-all active:scale-95"
+                className={`shrink-0 min-w-0 py-4 md:py-6 px-6 md:px-10 rounded-[2rem] disabled:opacity-20 flex items-center justify-center gap-2 md:gap-3 shadow-xl transition-all active:scale-95 ${isComplete ? 'bg-emerald-600 shadow-emerald-200' : 'bg-indigo-600 shadow-indigo-200 hover:bg-indigo-700 hover:translate-x-0.5'}`}
               >
-                <span className="font-black text-[10px] md:text-xs uppercase tracking-widest whitespace-nowrap">{t.next}</span>
+                <span className="font-black text-[10px] md:text-xs uppercase tracking-widest whitespace-nowrap text-white">{t.next}</span>
                 <IconChevronRight />
               </button>
             </div>
