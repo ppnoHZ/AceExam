@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const indexPath = path.resolve(__dirname, '../index.html');
-const scriptTag = '<script type="module" src="./App.tsx"></script>';
+const scriptTag = '<script type="module" src="./Index.tsx"></script>';
 
 try {
   let html = fs.readFileSync(indexPath, 'utf-8');
