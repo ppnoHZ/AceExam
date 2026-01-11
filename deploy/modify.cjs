@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const indexPath = path.resolve(__dirname, '../Index.html');
-const scriptTag = '<script  type="module" src="./index.tsx"></script>';
+const indexPath = path.resolve(__dirname, './Index.html');
+const scriptTag = '<script type="module" src="./index.tsx"></script>';
 
 try {
   let html = fs.readFileSync(indexPath, 'utf-8');
