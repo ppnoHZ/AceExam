@@ -34,7 +34,7 @@ jobs:
       - name: Install
         run: npm install
       - name: Build
-        run: npm run build
+        run: npm run build -- --base=${{ inputs.public_base_path }}
         env:
           NODE_ENV: production
       - name: Upload artifact
