@@ -34,7 +34,7 @@ jobs:
       - name: Install
         run: npm install
       - name: Build
-        run: npm run build -- --base=${{ inputs.public_base_path }}
+        run: npm run build -- --base=AceExam
         env:
           NODE_ENV: production
       - name: Upload artifact
