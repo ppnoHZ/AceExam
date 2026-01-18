@@ -35,14 +35,14 @@ jobs:
         run: npm install -g pnpm
       - name: Install
         run: pnpm install
-      - name: Modify index.html
-        run: node ./frontend/deploy/modify.cjs
+      # - name: Modify index.html
+      #   run: node ./frontend/deploy/modify.cjs
       - name: Build
         run: pnpm run build -w frontend -- --base=AceExam
         env:
           NODE_ENV: production
-      - name: Copy data.json
-        run: cp frontend/data.json frontend/dist/data.json
+      # - name: Copy data.json
+      #   run: cp frontend/data.json frontend/dist/data.json
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
         with:
