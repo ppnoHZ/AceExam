@@ -29,5 +29,3 @@ backend/*.db-journal
 
 # Env files
 .env
-.env.*
-! .env.example
