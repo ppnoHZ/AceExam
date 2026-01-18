@@ -26,3 +26,8 @@ backend/*.db-journal
 *.njsproj
 *.sln
 *.sw?
+
+# Env files
+.env
+.env.*
+! .env.example
