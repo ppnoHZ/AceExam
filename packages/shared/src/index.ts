@@ -1,4 +1,3 @@
-
 export type QuestionType = 'single' | 'multiple' | 'qa' | 'matching';
 
 export interface Question {

@@ -34,17 +34,17 @@ jobs:
       - name: Install
         run: npm install
       - name: Modify index.html
-        run: node ./deploy/modify.cjs
+        run: node ./frontend/deploy/modify.cjs
       - name: Build
-        run: npm run build -- --base=AceExam
+        run: npm run build -w frontend -- --base=AceExam
         env:
           NODE_ENV: production
-      - name: Build
-        run: cp data.json ./dist/data.json
+      - name: Copy data.json
+        run: cp frontend/data.json frontend/dist/data.json
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: ./dist
+          path: ./frontend/dist
 
   # Deployment job
   deploy:

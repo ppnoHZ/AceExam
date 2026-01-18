@@ -36,7 +36,10 @@ export const translations = {
     explanation: "The correct answer is {key}. This concept is vital for certification.",
     jumpTo: "Jump",
     topics: "Filter by Topics",
-    allTopics: "All Topics"
+    allTopics: "All Topics",
+    liveStats: "Live Analytics",
+    onlineUsers: "Online Users",
+    opsDashboard: "Operations Dashboard"
   },
   cn: {
     appName: "AceExam Pro",
@@ -74,7 +77,10 @@ export const translations = {
     explanation: "正确答案是 {key}。此概念对于认证考试至关重要，请务必掌握。",
     jumpTo: "跳转",
     topics: "按知识点筛选",
-    allTopics: "所有知识点"
+    allTopics: "全部知识点",
+    liveStats: "实时数据",
+    onlineUsers: "当前在线",
+    opsDashboard: "运营界面"
   }
 };
 

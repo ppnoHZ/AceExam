@@ -1,22 +1,16 @@
 {
-  "name": "aceexam-ai/ml-review-pro",
+  "name": "aceexam-monorepo",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "workspaces": [
+    "frontend",
+    "backend",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "build-vercel": "node ./deploy/modify.cjs && vite build && cp data.json ./dist/data.json",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "react-dom": "^19.2.3",
-    "react": "^19.2.3"
-  },
-  "devDependencies": {
-    "@types/node": "^22.14.0",
-    "@vitejs/plugin-react": "^5.0.0",
-    "typescript": "~5.8.2",
-    "vite": "^6.2.0"
+    "dev": "npm run dev --workspaces",
+    "build": "npm run build --workspaces --if-present",
+    "frontend:dev": "npm run dev -w frontend",
+    "frontend:build": "npm run build -w frontend",
+    "backend:dev": "npm run dev -w backend"
   }
 }

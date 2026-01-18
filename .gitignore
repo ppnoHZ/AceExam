@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# SQLite
+backend/*.db
+backend/*.db-journal
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

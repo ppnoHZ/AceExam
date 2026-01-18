@@ -1,5 +1,5 @@
 
-import React, { useState, forwardRef } from 'react';
+import React, { useState, useEffect, forwardRef } from 'react';
 import { IconMenu, IconSettings, IconX } from './Icons';
 import { translations, UILang } from '../locales';
 
@@ -8,12 +8,30 @@ interface LayoutProps {
   sidebarContent: React.ReactNode;
   onOpenSettings: () => void;
   uiLang: UILang;
+  fingerprint?: string | null;
+  isSocketConnected?: boolean;
 }
 
-const Layout = forwardRef<HTMLDivElement, LayoutProps>(({ children, sidebarContent, onOpenSettings, uiLang }, ref) => {
+const Layout = forwardRef<HTMLDivElement, LayoutProps>(({ children, sidebarContent, onOpenSettings, uiLang, fingerprint, isSocketConnected }, ref) => {
   // Desktop sidebar state: default open on large screens, hidden on small
-  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(window.innerWidth >= 1024);
   const t = translations[uiLang];
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setIsSidebarVisible(false);
+      } else {
+        setIsSidebarVisible(true);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    // Set initial state correctly on mount
+    handleResize();
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const toggleSidebar = () => setIsSidebarVisible(!isSidebarVisible);
 
@@ -26,11 +44,14 @@ const Layout = forwardRef<HTMLDivElement, LayoutProps>(({ children, sidebarConte
       />
 
       {/* Collapsible Sidebar */}
-      <aside className={`
-        fixed inset-y-0 left-0 z-[70] bg-slate-900 border-r border-slate-800 transition-all duration-300 ease-in-out overflow-hidden flex flex-col
-        lg:static lg:translate-x-0
-        ${isSidebarVisible ? 'w-[280px] translate-x-0 shadow-2xl lg:shadow-none' : 'w-0 -translate-x-full lg:w-0'}
-      `}>
+      <aside 
+        onClick={() => { if (window.innerWidth < 1024) setIsSidebarVisible(false); }}
+        className={`
+          fixed inset-y-0 left-0 z-[70] bg-slate-900 border-r border-slate-800 transition-all duration-300 ease-in-out overflow-hidden flex flex-col
+          lg:static lg:translate-x-0
+          ${isSidebarVisible ? 'w-[280px] translate-x-0 shadow-2xl lg:shadow-none' : 'w-0 -translate-x-full lg:w-0'}
+        `}
+      >
         <div className="w-[280px] flex flex-col h-full shrink-0">
           <div className="p-6 pb-4 flex items-center justify-between">
             <h1 className="text-lg font-black tracking-tighter text-white uppercase">{t.appName}</h1>
@@ -69,7 +90,14 @@ const Layout = forwardRef<HTMLDivElement, LayoutProps>(({ children, sidebarConte
           </div>
           
           <div className="flex items-center gap-2">
-             <div className="w-7 h-7 rounded bg-slate-900 shadow flex items-center justify-center text-white font-black text-[9px]">ACE</div>
+             {fingerprint && (
+               <div className="flex items-center gap-1.5 px-2 py-1 bg-white rounded-lg border border-slate-200 shadow-sm">
+                 <div className={`w-1.5 h-1.5 rounded-full ${isSocketConnected ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
+                 <span className="text-[10px] font-black text-slate-900 uppercase tracking-tight">
+                   {fingerprint.substring(0, 8)}
+                 </span>
+               </div>
+             )}
           </div>
         </header>
 

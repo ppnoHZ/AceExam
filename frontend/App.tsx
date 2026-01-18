@@ -5,9 +5,73 @@ import { translations, UILang } from './locales';
 import Layout from './components/Layout';
 import QuestionDisplay from './components/QuestionDisplay';
 import { IconPlay, IconRepeat, IconX, IconCheck, IconLanguages, IconChevronLeft, IconChevronRight } from './components/Icons';
+import { useSocket } from './hooks/useSocket';
+import FingerprintJS from '@fingerprintjs/fingerprintjs';
 
 const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
+  const [notifications, setNotifications] = useState<{ id: number; message: string; isCorrect: boolean }[]>([]);
+  const [fingerprint, setFingerprint] = useState<string | null>(null);
+  const [userCount, setUserCount] = useState(1);
+  const [isOpsOpen, setIsOpsOpen] = useState(false);
+  const [dbStats, setDbStats] = useState({ totalAnswers: 0, correctAnswers: 0, accuracy: 0, uniqueUsersInDb: 0 });
+
+  useEffect(() => {
+    if (isOpsOpen) {
+      const fetchStats = async () => {
+        try {
+          const res = await fetch('http://localhost:3003/api/stats');
+          const data = await res.json();
+          setDbStats(data);
+        } catch (e) {
+          console.error("Failed to fetch stats", e);
+        }
+      };
+      fetchStats();
+      const interval = setInterval(fetchStats, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [isOpsOpen]);
+
+  const socketOptions = useMemo(() => ({
+    auth: { fingerprint },
+    path: '/socket.io/aceexam'
+  }), [fingerprint]);
+
+  const { emit, on, isConnected } = useSocket('http://localhost:3003', socketOptions);
+
+  useEffect(() => {
+    if (!isConnected) return;
+    const cleanup = on('user_count_update', (data: any) => {
+      setUserCount(data.count);
+    });
+    return cleanup;
+  }, [on, isConnected]);
+
+  useEffect(() => {
+    const setFp = async () => {
+      const fp = await FingerprintJS.load();
+      const result = await fp.get();
+      setFingerprint(result.visitorId);
+    };
+    setFp();
+  }, []);
+
+  useEffect(() => {
+    if (!fingerprint || !isConnected) return;
+
+    const cleanup = on('broadcast_answer', (data: any) => {
+      const userIdDisplay = data.fingerprint ? data.fingerprint.substring(0, 6) : data.userId.substring(0, 4);
+      const msg = `User ${userIdDisplay}: Question #${data.questionId} is ${data.isCorrect ? 'Correct' : 'Incorrect'}`;
+      const id = Date.now();
+      setNotifications(prev => [...prev, { id, message: msg, isCorrect: data.isCorrect }]);
+      setTimeout(() => {
+        setNotifications(prev => prev.filter(n => n.id !== id));
+      }, 3000);
+    });
+    return cleanup;
+  }, [on, fingerprint, isConnected]);
+
   const [state, setState] = useState<AppState>(() => {
     const savedRecords = localStorage.getItem('answerRecords');
     const savedBilingual = localStorage.getItem('aceexam_bilingual');
@@ -30,6 +94,7 @@ const App: React.FC = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [jumpInputValue, setJumpInputValue] = useState('1');
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const autoNextTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const t = translations[state.uiLanguage];
@@ -181,6 +246,10 @@ const App: React.FC = () => {
   };
 
   const handleNav = (dir: 'prev' | 'next') => {
+    if (autoNextTimeoutRef.current) {
+      clearTimeout(autoNextTimeoutRef.current);
+      autoNextTimeoutRef.current = null;
+    }
     setState(prev => {
       const newIdx = dir === 'next' ? Math.min(prev.reviewOrder.length - 1, prev.currentIndex + 1) : Math.max(0, prev.currentIndex - 1);
       return { ...prev, currentIndex: newIdx };
@@ -199,6 +268,21 @@ const App: React.FC = () => {
   const handleRecordAnswer = (isCorrect: boolean) => {
     if (!currentQuestion) return;
     const qId = currentQuestion.question_id;
+
+    // Send answer to backend via WebSocket
+    emit('submit_answer', {
+      questionId: qId,
+      isCorrect,
+    });
+
+    if (isCorrect) {
+      if (autoNextTimeoutRef.current) clearTimeout(autoNextTimeoutRef.current);
+      autoNextTimeoutRef.current = setTimeout(() => {
+        handleNav('next');
+        autoNextTimeoutRef.current = null;
+      }, 1500);
+    }
+
     setState(prev => {
       const current = prev.answerRecords[qId] || { correct: 0, incorrect: 0 };
       return {
@@ -270,15 +354,20 @@ const App: React.FC = () => {
         </section>
 
         <section className="pt-4 border-t border-slate-800">
-           <h3 className="text-[9px] font-black uppercase tracking-widest text-slate-600 mb-3 px-2">{t.topics}</h3>
-           <div className="flex flex-wrap gap-1 px-2">
-              {allUniqueTags.map(tag => (
-                <button key={tag} onClick={() => handleModeChange('tags', tag)}
-                  className={`px-2 py-1 rounded-md text-[9px] font-bold transition-all border ${selectedTag === tag && state.currentMode === 'tags' ? 'bg-indigo-600 border-indigo-500 text-white' : 'bg-slate-800 border-slate-700 text-slate-500 hover:text-white'}`}>
-                  {tag}
-                </button>
-              ))}
-           </div>
+          <h3 className="text-[9px] font-black uppercase tracking-widest text-slate-600 mb-3 px-2">{t.opsDashboard}</h3>
+          <button 
+            onClick={() => setIsOpsOpen(true)}
+            className="flex items-center justify-between w-full px-3 py-2 rounded-lg bg-slate-800/50 border border-slate-700 hover:bg-slate-800 transition-all group"
+          >
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-ping absolute inset-0" />
+                <div className="w-2 h-2 bg-emerald-500 rounded-full relative" />
+              </div>
+              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 group-hover:text-white transition-colors">{t.liveStats}</span>
+            </div>
+            <span className="bg-indigo-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-md min-w-[20px] text-center">{userCount}</span>
+          </button>
         </section>
       </div>
     </div>
@@ -289,7 +378,105 @@ const App: React.FC = () => {
   const progressPercent = state.reviewOrder.length > 0 ? ((state.currentIndex + 1) / state.reviewOrder.length) * 100 : 0;
 
   return (
-    <Layout ref={scrollContainerRef} sidebarContent={sidebarContent} onOpenSettings={() => setIsSettingsOpen(true)} uiLang={state.uiLanguage}>
+    <Layout 
+      ref={scrollContainerRef} 
+      sidebarContent={sidebarContent} 
+      onOpenSettings={() => setIsSettingsOpen(true)} 
+      uiLang={state.uiLanguage}
+      fingerprint={fingerprint}
+      isSocketConnected={isConnected}
+    >
+      {/* Operations Dashboard Modal */}
+      {isOpsOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-md" onClick={() => setIsOpsOpen(false)} />
+          <div className="relative bg-white w-full max-w-lg rounded-[32px] shadow-2xl overflow-hidden border border-slate-200 animate-in fade-in zoom-in duration-300">
+            <div className="p-8">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h2 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">Live Analytics</h2>
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Real-time Terminal Platform</p>
+                </div>
+                <button onClick={() => setIsOpsOpen(false)} className="p-2 hover:bg-slate-100 rounded-2xl transition-all">
+                  <IconX />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="bg-slate-50 border border-slate-100 rounded-3xl p-6">
+                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Active nodes</span>
+                  <div className="flex items-baseline gap-2 mt-2">
+                    <span className="text-4xl font-black text-slate-900 tracking-tighter">{userCount}</span>
+                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                  </div>
+                </div>
+                <div className="bg-indigo-600 rounded-3xl p-6 text-white shadow-lg shadow-indigo-200">
+                  <span className="text-[9px] font-black text-indigo-200 uppercase tracking-widest">Total Answers</span>
+                  <div className="flex items-baseline gap-2 mt-2">
+                    <span className="text-4xl font-black tracking-tighter">{dbStats.totalAnswers}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 mb-8">
+                <div className="bg-slate-50 border border-slate-100 rounded-3xl p-6">
+                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Unique Users (History)</span>
+                  <div className="mt-2">
+                    <span className="text-2xl font-black text-slate-900 tracking-tighter">{dbStats.uniqueUsersInDb}</span>
+                  </div>
+                </div>
+                <div className="bg-slate-50 border border-slate-100 rounded-3xl p-6">
+                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Global Accuracy</span>
+                  <div className="mt-2">
+                    <span className="text-2xl font-black text-indigo-600 tracking-tighter">{dbStats.accuracy}%</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center justify-between px-2">
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Real-time Stream</span>
+                  <span className="text-[10px] font-black text-indigo-600 uppercase">Live</span>
+                </div>
+                <div className="bg-slate-900 rounded-2xl p-4 font-mono text-[9px] text-slate-400 h-40 overflow-y-auto space-y-2 custom-scrollbar-hidden">
+                  <div className="flex gap-3">
+                    <span className="text-emerald-500">[SYSTEM]</span>
+                    <span>Platform initialized. Port 3003 listening...</span>
+                  </div>
+                  {notifications.slice(-10).reverse().map(n => (
+                    <div key={n.id} className="flex gap-3">
+                      <span className={n.isCorrect ? 'text-indigo-400' : 'text-rose-400'}>[TRAFFIC]</span>
+                      <span className="text-slate-300">{n.message}</span>
+                    </div>
+                  ))}
+                  <div className="flex gap-3">
+                    <span className="text-slate-600">[METRIC]</span>
+                    <span>Total active sessions synced: {userCount}</span>
+                  </div>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => setIsOpsOpen(false)}
+                className="w-full mt-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-lg active:scale-[0.98]"
+              >
+                Close Dashboard
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Real-time Notifications */}
+      <div className="fixed top-4 right-4 z-50 space-y-2 pointer-events-none">
+        {notifications.map(n => (
+          <div key={n.id} className={`p-3 rounded-lg shadow-lg border text-[10px] font-black uppercase tracking-wider animate-bounce flex items-center gap-2 pointer-events-auto bg-white ${n.isCorrect ? 'border-emerald-500 text-emerald-600' : 'border-rose-500 text-rose-600'}`}>
+            <div className={`w-2 h-2 rounded-full ${n.isCorrect ? 'bg-emerald-500' : 'bg-rose-500'} animate-pulse`} />
+            {n.message}
+          </div>
+        ))}
+      </div>
+
       <div className="pb-24 pt-1">
         {currentQuestion ? (
           <QuestionDisplay 
