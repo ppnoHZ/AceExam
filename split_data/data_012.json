@@ -1,0 +1,84 @@
+[
+  {
+    "question_id": 221,
+    "type": "multiple",
+    "question_en": "A global financial company has developed an ML application to analyze stock market data and provide stock market trends. The company wants to continuously monitor the application development phases and to ensure that company policies and industry regulations are followed. Which AWS services will help the company assess compliance requirements? (Choose two.)",
+    "question_cn": "某全球金融公司开发了一款机器学习应用，用于分析股市数据并提供股市趋势。该公司希望持续监控应用开发阶段，确保符合公司政策和行业监管要求。哪些AWS服务可帮助该公司评估合规性要求？（选择两项）",
+    "options_en": {
+      "A": "AWS Audit Manager",
+      "B": "AWS Config",
+      "C": "Amazon Inspector",
+      "D": "Amazon CloudWatch",
+      "E": "AWS CloudTrail"
+    },
+    "options_cn": {
+      "A": "AWS Audit Manager（AWS审计管理器）",
+      "B": "AWS Config（AWS配置管理服务）",
+      "C": "Amazon Inspector（亚马逊漏洞扫描服务）",
+      "D": "Amazon CloudWatch（亚马逊监控服务）",
+      "E": "AWS CloudTrail（AWS云踪迹服务）"
+    },
+    "answer_en": "A;B",
+    "answer_cn": "A;B"
+  },
+  {
+    "question_id": 222,
+    "type": "single",
+    "question_en": "A company wants to identify harmful language in the comments section of social media posts by using an ML model. The company will not use labeled data to train the model. Which strategy should the company use to identify harmful language?",
+    "question_cn": "某公司希望使用机器学习模型识别社交媒体帖子评论区中的有害语言，且该公司不打算使用标记数据来训练模型。该公司应采用哪种策略识别有害语言？",
+    "options_en": {
+      "A": "Use Amazon Rekognition moderation.",
+      "B": "Use Amazon Comprehend toxicity detection.",
+      "C": "Use Amazon SageMaker built-in algorithms to train the model.",
+      "D": "Use Amazon Polly to monitor comments."
+    },
+    "options_cn": {
+      "A": "使用Amazon Rekognition内容审核功能。",
+      "B": "使用Amazon Comprehend毒性检测功能。",
+      "C": "使用Amazon SageMaker内置算法训练模型。",
+      "D": "使用Amazon Polly监控评论内容。"
+    },
+    "answer_en": "B",
+    "answer_cn": "B"
+  },
+  {
+    "question_id": 223,
+    "type": "single",
+    "question_en": "A company is deploying AI/ML models by using AWS services. The company wants to offer transparency into the models’ decision-making processes and provide explanations for the model outputs. Which AWS service or feature meets these requirements?",
+    "question_cn": "某公司正在使用AWS服务部署AI/ML模型，希望提升模型决策流程的透明度，并为模型输出提供解释说明。哪项AWS服务或功能能满足此需求？",
+    "options_en": {
+      "A": "Amazon SageMaker Model Cards",
+      "B": "Amazon Rekognition",
+      "C": "Amazon Comprehend",
+      "D": "Amazon Lex"
+    },
+    "options_cn": {
+      "A": "Amazon SageMaker Model Cards（亚马逊SageMaker模型卡片）",
+      "B": "Amazon Rekognition（亚马逊图像识别服务）",
+      "C": "Amazon Comprehend（亚马逊自然语言处理服务）",
+      "D": "Amazon Lex（亚马逊对话式AI服务）"
+    },
+    "answer_en": "A",
+    "answer_cn": "A"
+  },
+  {
+    "question_id": 224,
+    "type": "single",
+    "question_en": "A manufacturing company wants to create product descriptions in multiple languages. Which AWS service will automate this task?",
+    "question_cn": "某制造企业希望创建多语言的产品说明，哪种AWS服务可以自动化完成此任务？",
+    "options_en": {
+      "A": "Amazon Translate",
+      "B": "Amazon Transcribe",
+      "C": "Amazon Kendra",
+      "D": "Amazon Polly"
+    },
+    "options_cn": {
+      "A": "Amazon Translate（亚马逊翻译服务）",
+      "B": "Amazon Transcribe（亚马逊语音转文字服务）",
+      "C": "Amazon Kendra（亚马逊智能搜索服务）",
+      "D": "Amazon Polly（亚马逊文字转语音服务）"
+    },
+    "answer_en": "A",
+    "answer_cn": "A"
+  }
+]

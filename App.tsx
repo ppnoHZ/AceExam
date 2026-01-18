@@ -12,11 +12,13 @@ const App: React.FC = () => {
     const savedRecords = localStorage.getItem('answerRecords');
     const savedBilingual = localStorage.getItem('aceexam_bilingual');
     const savedShowAnswer = localStorage.getItem('aceexam_show_answer');
+    const savedMode = localStorage.getItem('aceexam_mode') as ReviewMode;
+    const savedIndex = localStorage.getItem('aceexam_sequence_index');
     
     return {
       questions: [],
-      currentMode: 'sequence',
-      currentIndex: 0,
+      currentMode: savedMode || 'sequence',
+      currentIndex: (savedMode === 'sequence' || !savedMode) && savedIndex ? parseInt(savedIndex, 10) : 0,
       reviewOrder: [],
       answerRecords: savedRecords ? JSON.parse(savedRecords) : {},
       showAnswerDirectly: savedShowAnswer === 'true',
@@ -53,11 +55,46 @@ const App: React.FC = () => {
           questions = await fetchQuestions();
         }
 
-        setState(prev => ({
-          ...prev,
-          questions,
-          reviewOrder: Array.from({ length: questions.length }, (_, i) => i),
-        }));
+        setState(prev => {
+          const qCount = questions.length;
+          let newOrder: number[] = [];
+          const savedTag = localStorage.getItem('aceexam_selected_tag');
+          
+          switch (prev.currentMode) {
+            case 'sequence': 
+              newOrder = Array.from({ length: qCount }, (_, i) => i); 
+              break;
+            case 'shuffle': 
+              newOrder = Array.from({ length: qCount }, (_, i) => i).sort(() => Math.random() - 0.5); 
+              break;
+            case 'random': 
+              newOrder = Array.from({ length: qCount }, (_, i) => i).sort(() => Math.random() - 0.5).slice(0, Math.min(20, qCount)); 
+              break;
+            case 'wrong': 
+              newOrder = Array.from({ length: qCount }, (_, i) => i).filter(i => {
+                const rec = prev.answerRecords[questions[i].question_id];
+                return rec && rec.incorrect > 0;
+              }); 
+              break;
+            case 'tags': 
+              if (savedTag) {
+                newOrder = Array.from({ length: qCount }, (_, i) => i).filter(i => questions[i].tags?.includes(savedTag));
+                setSelectedTag(savedTag);
+              } else {
+                newOrder = Array.from({ length: qCount }, (_, i) => i);
+              }
+              break;
+            default:
+              newOrder = Array.from({ length: qCount }, (_, i) => i);
+          }
+
+          return {
+            ...prev,
+            questions,
+            reviewOrder: newOrder,
+            currentIndex: Math.min(prev.currentIndex, Math.max(0, newOrder.length - 1))
+          };
+        });
       } catch (error) {
         console.error("Failed to load data:", error);
       } finally {
@@ -96,7 +133,16 @@ const App: React.FC = () => {
     localStorage.setItem('aceexam_ui_lang', state.uiLanguage);
     localStorage.setItem('aceexam_bilingual', state.bilingualMode);
     localStorage.setItem('aceexam_show_answer', state.showAnswerDirectly.toString());
-  }, [state.questions, state.answerRecords, state.uiLanguage, state.bilingualMode, state.showAnswerDirectly]);
+    localStorage.setItem('aceexam_mode', state.currentMode);
+    if (state.currentMode === 'sequence') {
+      localStorage.setItem('aceexam_sequence_index', state.currentIndex.toString());
+    }
+    if (selectedTag) {
+      localStorage.setItem('aceexam_selected_tag', selectedTag);
+    } else {
+      localStorage.removeItem('aceexam_selected_tag');
+    }
+  }, [state.questions, state.answerRecords, state.uiLanguage, state.bilingualMode, state.showAnswerDirectly, state.currentMode, state.currentIndex, selectedTag]);
 
   const currentQuestion = useMemo(() => {
     if (state.reviewOrder.length === 0) return null;
@@ -110,7 +156,9 @@ const App: React.FC = () => {
     setSelectedTag(tag);
 
     switch (mode) {
-      case 'sequence': newOrder = Array.from({ length: qCount }, (_, i) => i); break;
+      case 'sequence': 
+        newOrder = Array.from({ length: qCount }, (_, i) => i); 
+        break;
       case 'shuffle': newOrder = Array.from({ length: qCount }, (_, i) => i).sort(() => Math.random() - 0.5); break;
       case 'random': newOrder = Array.from({ length: qCount }, (_, i) => i).sort(() => Math.random() - 0.5).slice(0, Math.min(20, qCount)); break;
       case 'wrong': newOrder = Array.from({ length: qCount }, (_, i) => i).filter(i => {
@@ -120,7 +168,16 @@ const App: React.FC = () => {
       case 'tags': if (tag) { newOrder = Array.from({ length: qCount }, (_, i) => i).filter(i => state.questions[i].tags?.includes(tag)); } else { newOrder = Array.from({ length: qCount }, (_, i) => i); } break;
     }
 
-    setState(prev => ({ ...prev, currentMode: mode, currentIndex: 0, reviewOrder: newOrder }));
+    let nextIndex = 0;
+    if (mode === 'sequence') {
+      const savedIndex = localStorage.getItem('aceexam_sequence_index');
+      if (savedIndex) {
+        nextIndex = Math.min(parseInt(savedIndex, 10), newOrder.length - 1);
+        if (nextIndex < 0) nextIndex = 0;
+      }
+    }
+
+    setState(prev => ({ ...prev, currentMode: mode, currentIndex: nextIndex, reviewOrder: newOrder }));
   };
 
   const handleNav = (dir: 'prev' | 'next') => {
@@ -158,6 +215,7 @@ const App: React.FC = () => {
     if (!confirm(t.syncConfirm)) return;
     try {
       localStorage.removeItem('aceexam_questions'); 
+      localStorage.removeItem('aceexam_sequence_index');
       const questions = await fetchQuestions();
       setState(prev => ({ ...prev, questions, currentIndex: 0, currentMode: 'sequence', reviewOrder: Array.from({ length: questions.length }, (_, i) => i) }));
       setIsSettingsOpen(false);

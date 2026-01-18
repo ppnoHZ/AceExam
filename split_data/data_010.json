@@ -1,0 +1,414 @@
+[
+  {
+    "question_id": 181,
+    "type": "single",
+    "question_en": "A retail company wants to build an ML model to recommend products to customers. The company wants to build the model based on responsible practices. Which practice should the company apply when collecting data to decrease model bias?",
+    "question_cn": "某零售公司希望构建机器学习模型为客户推荐商品，且希望基于负责任的实践构建该模型。在数据收集阶段，公司应采取哪种做法来降低模型偏差？",
+    "options_en": {
+      "A": "Use data from only customers who match the demographics of the company's overall customer base.",
+      "B": "Collect data from customers who have a past purchase history.",
+      "C": "Ensure that the data is balanced and collected from a diverse group.",
+      "D": "Ensure that the data is from a publicly available dataset."
+    },
+    "options_cn": {
+      "A": "仅使用与公司整体客户群体人口统计特征匹配的客户数据",
+      "B": "仅收集有过往购买记录的客户数据",
+      "C": "确保数据均衡且从多样化群体中收集",
+      "D": "确保数据来自公开可用的数据集"
+    },
+    "answer_en": "C",
+    "answer_cn": "C"
+  },
+  {
+    "question_id": 182,
+    "type": "single",
+    "question_en": "An AI practitioner wants to deploy a chatbot that can assist customer service representatives by answering questions. The chatbot uses a large language model (LLM)｡ The chatbot needs to produce fine-grained responses based on evolving product documentation. Which solution meets these requirements?",
+    "question_cn": "一名AI从业者希望部署聊天机器人，辅助客服人员解答客户疑问，该机器人基于大语言模型（LLM）构建，且需要基于不断更新的产品文档生成精细化回复。哪种解决方案能满足需求？",
+    "options_en": {
+      "A": "Apply continuous pre-training with product documentation to build a custom model.",
+      "B": "Use product documentation with Retrieval Augmented Generation (RAG) to update the knowledge base.",
+      "C": "Use transfer learning to train a generalized model on various product domains.",
+      "D": "Collaborate with research institutions to develop a new foundation model (FM)｡"
+    },
+    "options_cn": {
+      "A": "结合产品文档开展持续预训练，构建自定义模型",
+      "B": "将产品文档接入检索增强生成（RAG）以更新知识库",
+      "C": "使用迁移学习在多产品领域训练通用模型",
+      "D": "与研究机构合作开发新的基础模型（FM）"
+    },
+    "answer_en": "B",
+    "answer_cn": "B"
+  },
+  {
+    "question_id": 183,
+    "type": "single",
+    "question_en": "A financial company is using AI systems to obtain customer credit scores as part of the loan application process. The company wants to expand to a new market in a different geographic area. The company must ensure that it can operate in that geographic area. Which compliance laws should the company review?",
+    "question_cn": "某金融公司在贷款申请流程中使用AI系统获取客户信用评分，现计划拓展至其他地区的新市场，需确保能在该地区合规运营。公司应查阅哪些合规法规？",
+    "options_en": {
+      "A": "Local health data protection laws",
+      "B": "Local payment card data protection laws",
+      "C": "Local education privacy laws",
+      "D": "Local algorithm accountability laws"
+    },
+    "options_cn": {
+      "A": "当地健康数据保护法规",
+      "B": "当地支付卡数据保护法规",
+      "C": "当地教育隐私法规",
+      "D": "当地算法问责相关法规"
+    },
+    "answer_en": "D",
+    "answer_cn": "D"
+  },
+  {
+    "question_id": 184,
+    "type": "single",
+    "question_en": "Which option describes embeddings in the context of AI?",
+    "question_cn": "在AI语境中，以下哪项是对嵌入向量的描述？",
+    "options_en": {
+      "A": "A method for compressing large datasets",
+      "B": "An encryption method for securing sensitive data",
+      "C": "A method for visualizing high-dimensional data",
+      "D": "A numerical method for data representation in a reduced dimensionality space"
+    },
+    "options_cn": {
+      "A": "一种用于压缩大型数据集的方法",
+      "B": "一种用于保护敏感数据的加密方法",
+      "C": "一种用于可视化高维数据的方法",
+      "D": "一种在降维空间中实现数据数值化表示的方法"
+    },
+    "answer_en": "D",
+    "answer_cn": "D"
+  },
+  {
+    "question_id": 185,
+    "type": "single",
+    "question_en": "Which option is a characteristic of transformer-based language models?",
+    "question_cn": "以下哪项是基于Transformer的语言模型的特征？",
+    "options_en": {
+      "A": "Transformer-based language models use convolutional layers to apply filters across an input to capture local patterns through filtered views.",
+      "B": "Transformer-based language models can process only text data.",
+      "C": "Transformer-based language models use self-attention mechanisms to capture contextual relationships.",
+      "D": "Transformer-based language models process data sequences one element at a time in cyclic iterations."
+    },
+    "options_cn": {
+      "A": "基于Transformer的语言模型使用卷积层对输入数据应用过滤器，通过过滤视图捕捉局部模式。",
+      "B": "基于Transformer的语言模型仅能处理文本数据。",
+      "C": "基于Transformer的语言模型使用自注意力机制捕捉上下文关联关系。",
+      "D": "基于Transformer的语言模型以循环迭代的方式，逐个处理数据序列中的元素。"
+    },
+    "answer_en": "C",
+    "answer_cn": "C"
+  },
+  {
+    "question_id": 186,
+    "type": "single",
+    "question_en": "In which stage of the generative AI model lifecycle are tests performed to examine the model's accuracy?",
+    "question_cn": "在生成式AI模型生命周期的哪个阶段会执行测试以检验模型的准确率？",
+    "options_en": {
+      "A": "Deployment",
+      "B": "Data selection",
+      "C": "Fine-tuning",
+      "D": "Evaluation"
+    },
+    "options_cn": {
+      "A": "部署阶段",
+      "B": "数据选择阶段",
+      "C": "微调阶段",
+      "D": "评估阶段"
+    },
+    "answer_en": "D",
+    "answer_cn": "D"
+  },
+  {
+    "question_id": 187,
+    "type": "single",
+    "question_en": "What does an AI practitioner do during the deployment phase of a generative AI model lifecycle?",
+    "question_cn": "在生成式AI模型生命周期的部署阶段，AI从业者需要执行什么工作？",
+    "options_en": {
+      "A": "Chooses the most useful and varied data to train the model",
+      "B": "Sets up and optimizes AWS Infrastructure for the live production environment",
+      "C": "Makes the model available in a live environment for end users to access",
+      "D": "Continuously trains the model on new data to improve accuracy"
+    },
+    "options_cn": {
+      "A": "选择最有用且多样化的数据来训练模型",
+      "B": "为线上生产环境搭建并优化AWS基础设施",
+      "C": "将模型部署至线上环境，供终端用户访问使用",
+      "D": "基于新数据持续训练模型以提升准确率"
+    },
+    "answer_en": "C",
+    "answer_cn": "C"
+  },
+  {
+    "question_id": 188,
+    "type": "single",
+    "question_en": "Which strategy will prevent model hallucinations?",
+    "question_cn": "哪种策略可预防模型幻觉问题？",
+    "options_en": {
+      "A": "Fact-check the output of the large language model (LLM)｡",
+      "B": "Compare the output of the large language model (LLM) to the results of an internet search.",
+      "C": "Use contextual grounding.",
+      "D": "Use relevance grounding."
+    },
+    "options_cn": {
+      "A": "对大语言模型（LLM）的输出进行事实核验",
+      "B": "将大语言模型（LLM）的输出与互联网搜索结果进行比对",
+      "C": "使用上下文关联性锚定",
+      "D": "使用相关性锚定"
+    },
+    "answer_en": "C",
+    "answer_cn": "C"
+  },
+  {
+    "question_id": 189,
+    "type": "single",
+    "question_en": "A company Is building a mobile app for users who have a visual impairment. The app must be able to hear what users say and provide voice responses. Which solution will meet these requirements?",
+    "question_cn": "某公司正在为视障用户开发移动应用，该应用需能识别用户语音并给出语音回复。哪种解决方案能满足需求？",
+    "options_en": {
+      "A": "Use a deep learning neural network to perform speech recognition.",
+      "B": "Build ML models to search for patterns in numeric data.",
+      "C": "Use generative AI summarization to generate human-like text.",
+      "D": "Build custom models for image classification and recognition."
+    },
+    "options_cn": {
+      "A": "使用深度学习神经网络实现语音识别",
+      "B": "构建机器学习模型以查找数值数据中的模式",
+      "C": "使用生成式AI摘要技术生成类人文本",
+      "D": "构建自定义模型实现图像分类与识别"
+    },
+    "answer_en": "A",
+    "answer_cn": "A"
+  },
+  {
+    "question_id": 190,
+    "type": "single",
+    "question_en": "A company Is working on a large language model (LLM) and noticed that the LLM's outputs are not as diverse as expected. Which parameter should the company adjust?",
+    "question_cn": "某公司正在研发大语言模型（LLM），发现模型输出的多样性未达预期。公司应调整哪个参数？",
+    "options_en": {
+      "A": "Temperature",
+      "B": "Batch size",
+      "C": "Learning rate",
+      "D": "Optimizer type"
+    },
+    "options_cn": {
+      "A": "温度参数",
+      "B": "批量大小",
+      "C": "学习率",
+      "D": "优化器类型"
+    },
+    "answer_en": "A",
+    "answer_cn": "A"
+  },
+  {
+    "question_id": 191,
+    "type": "multiple",
+    "question_en": "(多选题)A company uses Amazon Bedrock for its generative AI application. The company wants to use Amazon Bedrock Guardrails to detect and filter harmful user inputs and model-generated outputs. Which content categories can the guardrails filter? (Select TWO.)",
+    "question_cn": "(多选题)某公司将Amazon Bedrock用于其生成式AI应用，希望通过Amazon Bedrock内容防护机制检测并过滤有害的用户输入和模型生成输出。该防护机制可过滤哪些内容类别？（选择两项）",
+    "options_en": {
+      "A": "Hate",
+      "B": "Politics",
+      "C": "Violence",
+      "D": "Gambling",
+      "E": "Religion"
+    },
+    "options_cn": {
+      "A": "仇恨言论",
+      "B": "政治相关内容",
+      "C": "暴力相关内容",
+      "D": "赌博相关内容",
+      "E": "宗教相关内容"
+    },
+    "answer_en": "A;C",
+    "answer_cn": "A;C"
+  },
+  {
+    "question_id": 192,
+    "type": "qa",
+    "question_en": "(问答题)A company is building a generative AI application and is reviewing foundation models (FMs)｡ The company needs to consider multiple FM characteristics. Select the correct FM characteristic from the following list for each definition. Each FM characteristic should be selected one time.(Select THREE.)\n• Concurrency\n• Context windows\n• Latency\n1. Amount of information that can fit in a single prompt\n2. Length of time it takes for a model to generate an output\n3. Multiple users invoking an application endpoint simultaneously",
+    "question_cn": "(问答题)某公司正在构建生成式AI应用并评估基础模型（FM），需考量模型的多项特性。请为以下每个定义从列表中选择对应的FM特性，每种特性仅可选择一次。（选择三项）\n• 并发能力\n• 上下文窗口\n• 延迟\n1. 单个提示词可容纳的信息量\n2. 模型生成输出所需的时长\n3. 多用户同时调用应用端点的能力",
+    "options_en": {
+      "特性选项": [
+        "Concurrency",
+        "Context windows",
+        "Latency"
+      ],
+      "定义1": "Amount of information that can fit in a single prompt",
+      "定义2": "Length of time it takes for a model to generate an output",
+      "定义3": "Multiple users invoking an application endpoint simultaneously"
+    },
+    "options_cn": {
+      "特性选项": [
+        "并发能力",
+        "上下文窗口",
+        "延迟"
+      ],
+      "定义1": "单个提示词可容纳的信息量",
+      "定义2": "模型生成输出所需的时长",
+      "定义3": "多用户同时调用应用端点的能力"
+    },
+    "answer_en": "定义1: Context windows; 定义2: Latency; 定义3: Concurrency",
+    "answer_cn": "定义1：上下文窗口；定义2：延迟；定义3：并发能力"
+  },
+  {
+    "question_id": 193,
+    "type": "single",
+    "question_en": "Which AWS service or feature stores embeddings in a vector database for use with foundation models (FMS) and Retrieval Augmented Generation (RAG)?",
+    "question_cn": "哪项AWS服务或功能可将嵌入向量存储在向量数据库中，供基础模型（FM）和检索增强生成（RAG）使用？",
+    "options_en": {
+      "A": "Amazon SageMaker Ground Truth Elag for Review",
+      "B": "Amazon OpenSearch Service",
+      "C": "Amazon Transcribe",
+      "D": "Amazon Textract"
+    },
+    "options_cn": {
+      "A": "Amazon SageMaker Ground Truth审核标记工具",
+      "B": "Amazon OpenSearch Service",
+      "C": "Amazon Transcribe",
+      "D": "Amazon Textract"
+    },
+    "answer_en": "B",
+    "answer_cn": "B"
+  },
+  {
+    "question_id": 194,
+    "type": "multiple",
+    "question_en": "(多选题)A company stores millions of PDF documents in an Amazon S3 bucket. The company needs to extract the text from the PDFs, generate summaries of the text, and index the summaries for fast searching. Which combination of AWS services will meet these requirements? (Select TWO.)",
+    "question_cn": "(多选题)某公司在Amazon S3存储桶中存储了数百万份PDF文档，需从PDF中提取文本、生成文本摘要并为摘要建立索引以实现快速搜索。哪些AWS服务组合能满足需求？（选择两项）",
+    "options_en": {
+      "A": "Amazon Translate",
+      "B": "Amazon Bedrock",
+      "C": "Amazon Transcribe",
+      "D": "Amazon Polly",
+      "E": "Amazon Textract"
+    },
+    "options_cn": {
+      "A": "Amazon Translate",
+      "B": "Amazon Bedrock",
+      "C": "Amazon Transcribe",
+      "D": "Amazon Polly",
+      "E": "Amazon Textract"
+    },
+    "answer_en": "B;E",
+    "answer_cn": "B;E"
+  },
+  {
+    "question_id": 195,
+    "type": "single",
+    "question_en": "A food service company wants to collect a dataset to predict customer food preferences: The company wants to ensure that the food preferences of all demographics are included in the data. Which dataset characteristic does this scenario present?",
+    "question_cn": "某食品服务公司希望收集数据集以预测客户的饮食偏好，需确保数据中涵盖所有人群的饮食偏好。该场景体现了数据集的哪项特性？",
+    "options_en": {
+      "A": "Accuracy",
+      "B": "Diversity",
+      "C": "Recency bias",
+      "D": "Reliability"
+    },
+    "options_cn": {
+      "A": "准确性",
+      "B": "多样性",
+      "C": "时效性偏差",
+      "D": "可靠性"
+    },
+    "answer_en": "B",
+    "answer_cn": "B"
+  },
+  {
+    "question_id": 196,
+    "type": "single",
+    "question_en": "Which scenario describes a potential risk and limitation of prompt engineering in the context of a generative AI model?",
+    "question_cn": "以下哪个场景描述了生成式AI模型中提示词工程的潜在风险与局限性？",
+    "options_en": {
+      "A": "Prompt engineering does not ensure that the model always produces consistent and deterministic outputs, eliminating the need for validation.",
+      "B": "Prompt engineering could expose the model to vulnerabilities such as prompt injection attacks.",
+      "C": "Properly designed prompts reduce but do not eliminate the risk of data poisoning or model hijacking.",
+      "D": "Prompt engineering does not ensure that the model will consistently generate highly reliable outputs when working with real-world data."
+    },
+    "options_cn": {
+      "A": "提示词工程无法确保模型始终生成一致且确定的输出，因此无需再进行验证",
+      "B": "提示词工程可能使模型面临提示词注入攻击等安全漏洞",
+      "C": "设计良好的提示词可降低但无法消除数据投毒或模型劫持的风险",
+      "D": "在处理真实世界数据时，提示词工程无法确保模型持续生成高可靠性输出"
+    },
+    "answer_en": "B",
+    "answer_cn": "B"
+  },
+  {
+    "question_id": 197,
+    "type": "single",
+    "question_en": "A company is creating an agent for its application by using Amazon Bedrock Agents. The agent is performing well, but the company wants to improve the agent's accuracy by providing some specific examples. Which solution meets these requirements?",
+    "question_cn": "某公司正在通过Amazon Bedrock智能代理为其应用构建代理，该代理当前表现良好，但公司希望通过提供特定示例进一步提升其准确率。哪种解决方案能满足需求？",
+    "options_en": {
+      "A": "Modify the advanced prompts for the agent to include the examples.",
+      "B": "Create a guardrail for the agent that includes the examples.",
+      "C": "Use Amazon SageMaker Ground Truth to label the examples.",
+      "D": "Run a script in AWS Lambda that adds the examples to the training dataset."
+    },
+    "options_cn": {
+      "A": "修改代理的高级提示词，将示例纳入其中",
+      "B": "为代理创建包含示例的内容防护规则",
+      "C": "使用Amazon SageMaker Ground Truth为示例打标签",
+      "D": "在AWS Lambda中运行脚本，将示例添加至训练数据集"
+    },
+    "answer_en": "A",
+    "answer_cn": "A"
+  },
+  {
+    "question_id": 198,
+    "type": "single",
+    "question_en": "A bank Is building a chatbot to answer customer questions about opening a bank account. The chatbot will use public bank documents to generate responses. The company will use Amazon Bedrock and prompt engineering to improve the chatbot's responses. Which prompt engineering technique meets these requirements?",
+    "question_cn": "某银行正在构建聊天机器人，解答客户关于开立银行账户的疑问，该机器人将基于银行公开文档生成回复。公司计划通过Amazon Bedrock和提示词工程提升机器人回复质量。哪种提示词工程技术能满足需求？",
+    "options_en": {
+      "A": "Complexity-based prompting",
+      "B": "Zero-shot prompting",
+      "C": "Few-shot prompting",
+      "D": "Directional stimulus prompting"
+    },
+    "options_cn": {
+      "A": "基于复杂度的提示词技术",
+      "B": "零样本提示词技术",
+      "C": "少样本提示词技术",
+      "D": "定向刺激提示词技术"
+    },
+    "answer_en": "C",
+    "answer_cn": "C"
+  },
+  {
+    "question_id": 199,
+    "type": "single",
+    "question_en": "What is continued pre-training?",
+    "question_cn": "什么是持续预训练？",
+    "options_en": {
+      "A": "The process of fine-tuning a pre-trained language model on labeled data for a specific task",
+      "B": "The process of providing unlabeled data to a pre-trained language model to improve the model's domain knowledge",
+      "C": "The process of training a language model from the beginning on a specific dataset",
+      "D": "The process of evaluating the performance of a pre-trained language model on a test set"
+    },
+    "options_cn": {
+      "A": "在标记数据上对预训练语言模型进行微调，使其适配特定任务的过程",
+      "B": "向预训练语言模型输入未标记数据，以提升模型领域知识的过程",
+      "C": "基于特定数据集从零开始训练语言模型的过程",
+      "D": "在测试集上评估预训练语言模型性能的过程"
+    },
+    "answer_en": "B",
+    "answer_cn": "B"
+  },
+  {
+    "question_id": 200,
+    "type": "single",
+    "question_en": "What is the purpose of chunking in Retrieval Augmented Generation (RAG)?",
+    "question_cn": "在检索增强生成（RAG）中，分块（chunking）的目的是什么？",
+    "options_en": {
+      "A": "To avoid database storage limitations for large text documents by storing parts or chunks of the text",
+      "B": "To improve efficiency by avoiding the need to convert large text into vector embeddings",
+      "C": "To improve the contextual relevancy of results retrieved from the vector index",
+      "D": "To decrease the cost of storage by storing parts or chunks of the text"
+    },
+    "options_cn": {
+      "A": "通过存储大文本的部分片段来规避数据库的存储限制",
+      "B": "通过避免将大文本转换为向量嵌入来提升效率",
+      "C": "提升从向量索引中检索到的结果的上下文相关性",
+      "D": "通过存储文本片段来降低存储成本"
+    },
+    "answer_en": "C",
+    "answer_cn": "C"
+  }
+]

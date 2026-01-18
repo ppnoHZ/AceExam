@@ -1,0 +1,404 @@
+[
+  {
+    "question_id": 141,
+    "type": "single",
+    "question_en": "Which option is a characteristic of AI governance frameworks for building trust and deploying human-centered AI technologies?",
+    "question_cn": "在构建可信且以人为中心的AI技术体系时，AI治理框架的哪项特性是核心要素？",
+    "options_en": {
+      "A": "Expanding initiatives across business units to create long-term business value",
+      "B": "Ensuring alignment with business standards, revenue goals, and stakeholder expectations",
+      "C": "Overcoming challenges to drive business transformation and growth",
+      "D": "Developing policies and guidelines for data, transparency, responsible AI, and compliance"
+    },
+    "options_cn": {
+      "A": "跨业务单元拓展相关举措，创造长期商业价值",
+      "B": "确保与业务标准、营收目标及利益相关者预期保持一致",
+      "C": "克服各类挑战，驱动业务转型与增长",
+      "D": "制定针对数据管理、透明度、负责任AI及合规性的政策与指南"
+    },
+    "answer_en": "D",
+    "answer_cn": "D"
+  },
+  {
+    "question_id": 142,
+    "type": "single",
+    "question_en": "Which option is a benefit of using Amazon SageMaker Model Cards to document AI models?",
+    "question_cn": "使用Amazon SageMaker模型卡片对AI模型进行文档化管理的核心优势是什么？",
+    "options_en": {
+      "A": "Providing a visually appealing summary of a model's capabilities.",
+      "B": "Standardizing information about a model's purpose, performance, and limitations.",
+      "C": "Reducing the overall computational requirements of a model.",
+      "D": "Physically storing models for archival purposes."
+    },
+    "options_cn": {
+      "A": "生成具备视觉吸引力的模型能力摘要",
+      "B": "标准化记录模型的用途、性能表现及局限性等核心信息",
+      "C": "降低模型的整体计算资源需求",
+      "D": "为模型提供物理存储以实现归档留存"
+    },
+    "answer_en": "B",
+    "answer_cn": "B"
+  },
+  {
+    "question_id": 143,
+    "type": "single",
+    "question_en": "What does an F1 score measure in the context of foundation model (FM) performance?",
+    "question_cn": "在评估基础模型（FM）性能时，F1分数的核心衡量维度是什么？",
+    "options_en": {
+      "A": "Model precision and recall",
+      "B": "Model speed in generating responses",
+      "C": "Financial cost of operating the model",
+      "D": "Energy efficiency of the model's computations"
+    },
+    "options_cn": {
+      "A": "模型的精确率与召回率",
+      "B": "模型生成回复的速度",
+      "C": "模型运行的财务成本",
+      "D": "模型计算过程的能源效率"
+    },
+    "answer_en": "A",
+    "answer_cn": "A"
+  },
+  {
+    "question_id": 144,
+    "type": "single",
+    "question_en": "A company is building an ML model. The company collected new data and analyzed the data by creating a correlation matrix, calculating statistics, and visualizing the data. Which stage of the ML pipeline is the company currently in?",
+    "question_cn": "某公司正在构建机器学习模型，已采集新数据并开展分析，包括生成相关矩阵、计算统计指标及实现数据可视化。该公司当前处于机器学习流水线的哪个阶段？",
+    "options_en": {
+      "A": "Data pre-processing",
+      "B": "Feature engineering",
+      "C": "Exploratory data analysis",
+      "D": "Hyperparameter tuning"
+    },
+    "options_cn": {
+      "A": "数据预处理阶段",
+      "B": "特征工程阶段",
+      "C": "探索性数据分析阶段",
+      "D": "超参数调优阶段"
+    },
+    "answer_en": "C",
+    "answer_cn": "C"
+  },
+  {
+    "question_id": 145,
+    "type": "single",
+    "question_en": "A company deployed an AI/ML solution to help customer service agents respond to frequently asked questions. The questions can change over time. The company wants to give customer service agents the ability to ask questions and receive automatically generated answers to common customer questions. Which strategy will meet these requirements MOST cost-effectively?",
+    "question_cn": "某公司已部署AI/ML解决方案，辅助客服人员回复常见问题，但客户问题会随时间动态变化。公司希望让客服人员能自主提问，并获取针对常见客户问题的自动生成答案。哪种策略能以最低成本满足需求？",
+    "options_en": {
+      "A": "Fine-tune the model regularly.",
+      "B": "Train the model by using context data.",
+      "C": "Pre-train and benchmark the model by using context data.",
+      "D": "Use Retrieval Augmented Generation (RAG) with prompt engineering techniques."
+    },
+    "options_cn": {
+      "A": "定期微调模型",
+      "B": "使用上下文数据训练模型",
+      "C": "使用上下文数据预训练模型并开展基准测试",
+      "D": "结合提示词工程技术，采用检索增强生成（RAG）方案"
+    },
+    "answer_en": "D",
+    "answer_cn": "D"
+  },
+  {
+    "question_id": 146,
+    "type": "multiple",
+    "question_en": "(多选题)A publishing company built a Retrieval Augmented Generation (RAG) based solution to give its users the ability to interact with published content. New content is published daily. The company wants to provide a near real-time experience to users. Which steps in the RAG pipeline should the company implement by using offline batch processing to meet these requirements? (Select Two.)",
+    "question_cn": "(多选题)某出版公司基于检索增强生成（RAG）构建了解决方案，支持用户与已发布内容进行交互，且每日都会发布新内容，公司希望为用户提供近实时的交互体验。在RAG流水线中，哪些步骤应通过离线批量处理实现以满足需求？（选择两项）",
+    "options_en": {
+      "A": "Generation of content embeddings",
+      "B": "Generation of embeddings for user queries",
+      "C": "Creation of the search index",
+      "D": "Retrieval of relevant content",
+      "E": "Response generation for the user"
+    },
+    "options_cn": {
+      "A": "生成内容嵌入向量",
+      "B": "为用户查询生成嵌入向量",
+      "C": "创建搜索索引",
+      "D": "检索相关内容",
+      "E": "为用户生成回复内容"
+    },
+    "answer_en": "A;C",
+    "answer_cn": "A;C"
+  },
+  {
+    "question_id": 147,
+    "type": "single",
+    "question_en": "A company built an AI-powered resume screening system. The company used a large dataset to train the model The dataset contained resumes that were not representative of all demographics. Which core dimension of responsible AI does this scenario present?",
+    "question_cn": "某公司构建了AI驱动的简历筛选系统，使用大型数据集训练模型，但该数据集未能覆盖所有人群的简历样本。该场景违背了负责任AI的哪个核心维度？",
+    "options_en": {
+      "A": "Fairness",
+      "B": "Explainability",
+      "C": "Privacy and security",
+      "D": "Transparency"
+    },
+    "options_cn": {
+      "A": "公平性维度",
+      "B": "可解释性维度",
+      "C": "隐私与安全性维度",
+      "D": "透明度维度"
+    },
+    "answer_en": "A",
+    "answer_cn": "A"
+  },
+  {
+    "question_id": 148,
+    "type": "single",
+    "question_en": "An ecommerce company is developing a new mobile app. The app will give users the ability to search the company's product catalog by entering keyword search terms or by uploading a photo of a similar item to find visually similar products. The company wants to use Amazon Titan for both search capabilities. Which Amazon Titan model meets these requirements?",
+    "question_cn": "某电商公司正在开发一款新的移动应用，该应用将支持用户通过输入关键词，或上传相似商品的照片来搜索公司产品目录，查找视觉相似的商品。公司希望使用Amazon Titan实现这两种搜索功能。哪种Amazon Titan模型能满足需求？",
+    "options_en": {
+      "A": "Amazon Titan Text Express",
+      "B": "Amazon Titan Text Lite",
+      "C": "Amazon Titan Embeddings",
+      "D": "Amazon Titan Multimodal Embeddings"
+    },
+    "options_cn": {
+      "A": "Amazon Titan Text Express（亚马逊泰坦文本增强模型）",
+      "B": "Amazon Titan Text Lite（亚马逊泰坦文本轻量模型）",
+      "C": "Amazon Titan Embeddings（亚马逊泰坦嵌入向量模型）",
+      "D": "Amazon Titan Multimodal Embeddings（亚马逊泰坦多模态嵌入向量模型）"
+    },
+    "answer_en": "D",
+    "answer_cn": "D"
+  },
+  {
+    "question_id": 149,
+    "type": "single",
+    "question_en": "An airline company wants to build a conversational AI assistant to answer customer questions about flight schedules, booking, and payments. The company wants to use large language models (LLMs) and a knowledge base to create a textbased chatbot interface. Which solution will meet these requirements with the LEAST development effort?",
+    "question_cn": "某航空公司希望构建对话式AI助手，解答客户关于航班时刻、机票预订及支付的问题，计划使用大语言模型（LLM）和知识库搭建文本类聊天机器人界面。哪种解决方案能以最低开发成本满足需求？",
+    "options_en": {
+      "A": "Train models on Amazon SageMaker Autopilot.",
+      "B": "Develop a Retrieval Augmented Generation (RAG) agent by using Amazon Bedrock.",
+      "C": "Create a Python application by using Amazon Q Developer.",
+      "D": "Fine-tune models on Amazon SageMaker Jumpstart."
+    },
+    "options_cn": {
+      "A": "在Amazon SageMaker Autopilot上训练模型",
+      "B": "基于Amazon Bedrock开发检索增强生成（RAG）智能代理",
+      "C": "通过Amazon Q Developer开发Python应用",
+      "D": "在Amazon SageMaker Jumpstart上微调模型"
+    },
+    "answer_en": "B",
+    "answer_cn": "B"
+  },
+  {
+    "question_id": 150,
+    "type": "single",
+    "question_en": "A company wants to keep its foundation model (FM) relevant by using the most recent data. The company wants to implement a model training strategy that includes regular updates to the FM. Which solution meets these requirements?",
+    "question_cn": "某公司希望通过引入最新数据保持基础模型（FM）的时效性，计划实施包含模型定期更新的训练策略。哪种解决方案能满足需求？",
+    "options_en": {
+      "A": "Batch learning",
+      "B": "Continuous pre-training",
+      "C": "Static training",
+      "D": "Latent training"
+    },
+    "options_cn": {
+      "A": "批量学习策略",
+      "B": "持续预训练策略",
+      "C": "静态训练策略",
+      "D": "潜在空间训练策略"
+    },
+    "answer_en": "B",
+    "answer_cn": "B"
+  },
+  {
+    "question_id": 151,
+    "type": "single",
+    "question_en": "A financial company is developing a generative AI application for loan approval decisions. The company needs the application output to be responsible and fair. Which solution meets these requirements?",
+    "question_cn": "某金融公司正在开发用于贷款审批决策的生成式AI应用，要求应用输出结果具备责任性和公平性。哪种解决方案能满足需求？",
+    "options_en": {
+      "A": "Review the training data to check for biases. Include data from all demographics in the training data.",
+      "B": "Use a deep learning model with many hidden layers.",
+      "C": "Keep the model's decision-making process a secret to protect proprietary algorithms.",
+      "D": "Continuously monitor the model's performance on a static test dataset."
+    },
+    "options_cn": {
+      "A": "审核训练数据以排查偏差，确保训练数据覆盖所有人群样本",
+      "B": "使用包含多层隐藏层的深度学习模型",
+      "C": "对模型决策流程严格保密，以保护专有算法",
+      "D": "基于静态测试数据集持续监控模型性能"
+    },
+    "answer_en": "A",
+    "answer_cn": "A"
+  },
+  {
+    "question_id": 152,
+    "type": "single",
+    "question_en": "A company is using a large language model (LLM) on Amazon Bedrock to build a chatbot. The chatbot processes customer support requests. To resolve a request, the customer and the chatbot must interact a few times. Which solution gives the LLM the ability to use content from previous customer messages?",
+    "question_cn": "某公司基于Amazon Bedrock的大语言模型（LLM）构建客服聊天机器人，该机器人需处理客户支持请求，且部分请求需通过客户与机器人的多轮交互才能解决。哪种解决方案可让LLM调用客户历史对话内容？",
+    "options_en": {
+      "A": "Turn on model invocation logging to collect messages.",
+      "B": "Add messages to the model prompt.",
+      "C": "Use Amazon Personalize to save conversation history.",
+      "D": "Use Provisioned Throughput for the LLM."
+    },
+    "options_cn": {
+      "A": "开启模型调用日志以收集对话消息",
+      "B": "将历史对话消息加入模型提示词中",
+      "C": "通过Amazon Personalize保存对话历史",
+      "D": "为LLM启用预置吞吐量服务"
+    },
+    "answer_en": "B",
+    "answer_cn": "B"
+  },
+  {
+    "question_id": 153,
+    "type": "single",
+    "question_en": "An AI practitioner is developing a prompt for an Amazon Titan model. The model is hosted on Amazon Bedrock. The AI practitioner is using the model to solve numerical reasoning challenges. The AI practitioner adds the following phrase to the end of the prompt: 'Ask the model to show its work by explaining its reasoning step by step.' Which prompt engineering technique is the AI practitioner using?",
+    "question_cn": "某AI从业者正在为Amazon Bedrock上的Amazon Titan模型编写提示词，用于解决数值推理类任务，并在提示词末尾添加了指令：“要求模型分步解释推理过程，展示计算步骤”。该从业者使用的是哪种提示词工程技术？",
+    "options_en": {
+      "A": "Chain-of-thought prompting",
+      "B": "Prompt injection",
+      "C": "Few-shot prompting",
+      "D": "Prompt templating"
+    },
+    "options_cn": {
+      "A": "思维链提示词技术",
+      "B": "提示词注入技术",
+      "C": "少样本提示词技术",
+      "D": "提示词模板技术"
+    },
+    "answer_en": "A",
+    "answer_cn": "A"
+  },
+  {
+    "question_id": 154,
+    "type": "single",
+    "question_en": "A company is developing an ML model to predict customer churn. Which evaluation metric will assess the model's performance on a binary classification task such as predicting churn?",
+    "question_cn": "某公司正在开发预测客户流失的机器学习模型，针对此类二分类任务，可使用哪种评估指标衡量模型性能？",
+    "options_en": {
+      "A": "F1 score",
+      "B": "Mean squared error (MSE)",
+      "C": "R-squared",
+      "D": "Time used to train the model"
+    },
+    "options_cn": {
+      "A": "F1分数",
+      "B": "均方误差（MSE）",
+      "C": "R平方值",
+      "D": "模型训练耗时"
+    },
+    "answer_en": "A",
+    "answer_cn": "A"
+  },
+  {
+    "question_id": 155,
+    "type": "single",
+    "question_en": "A company's large language model (LLM) is experiencing hallucinations. How can the company decrease hallucinations?",
+    "question_cn": "某公司的大语言模型（LLM）出现了幻觉问题，该公司可通过哪种方式减少模型幻觉？",
+    "options_en": {
+      "A": "Set up Agents for Amazon Bedrock to supervise the model training.",
+      "B": "Use data pre-processing and remove any data that causes hallucinations.",
+      "C": "Decrease the temperature inference parameter for the model.",
+      "D": "Use a foundation model (FM) that is trained to not hallucinate."
+    },
+    "options_cn": {
+      "A": "搭建Amazon Bedrock智能代理监督模型训练过程",
+      "B": "开展数据预处理，剔除会引发幻觉的数据源",
+      "C": "降低模型的推理温度参数",
+      "D": "使用经过防幻觉训练的基础模型（FM）"
+    },
+    "answer_en": "C",
+    "answer_cn": "C"
+  },
+  {
+    "question_id": 156,
+    "type": "single",
+    "question_en": "A medical company wants to develop an AI application that can access structured patient records, extract relevant information, and generate concise summaries. Which solution will meet these requirements?",
+    "question_cn": "某医疗公司希望开发AI应用，实现对结构化患者病历的访问、关键信息提取及内容的简明汇总。哪种解决方案能满足需求？",
+    "options_en": {
+      "A": "Use Amazon Comprehend Medical to extract relevant medical entities and relationships. Apply rule-based logic to structure and format summaries.",
+      "B": "Use Amazon Personalize to analyze patient engagement patterns. Integrate the output with a general purpose text summarization tool.",
+      "C": "Use Amazon Textract to convert scanned documents into digital text. Design a keyword extraction system to generate summaries.",
+      "D": "Implement Amazon Kendra to provide a searchable index for medical records. Use a template-based system to format summaries."
+    },
+    "options_cn": {
+      "A": "通过Amazon Comprehend Medical提取相关医疗实体及关联关系，再通过规则逻辑实现摘要的结构化与格式化",
+      "B": "通过Amazon Personalize分析患者参与度模式，将输出结果与通用文本摘要工具集成",
+      "C": "通过Amazon Textract将扫描文档转换为数字文本，再构建关键词提取系统生成摘要",
+      "D": "部署Amazon Kendra为病历构建可搜索索引，通过模板系统实现摘要格式化"
+    },
+    "answer_en": "A",
+    "answer_cn": "A"
+  },
+  {
+    "question_id": 157,
+    "type": "single",
+    "question_en": "A hospital is developing an AI system to assist doctors in diagnosing diseases based on patient records and medical images. To comply with regulations, the sensitive patient data must not leave the country the data is located in. Which data governance strategy will ensure compliance and protect patient privacy?",
+    "question_cn": "某医院正在开发AI系统，辅助医生基于患者病历和医学影像开展疾病诊断。为满足监管要求，敏感患者数据不得跨出国境。哪种数据治理策略可确保合规性并保护患者隐私？",
+    "options_en": {
+      "A": "Data residency",
+      "B": "Data quality",
+      "C": "Data discoverability",
+      "D": "Data enrichment"
+    },
+    "options_cn": {
+      "A": "数据驻留策略",
+      "B": "数据质量策略",
+      "C": "数据可发现性策略",
+      "D": "数据增强策略"
+    },
+    "answer_en": "A",
+    "answer_cn": "A"
+  },
+  {
+    "question_id": 158,
+    "type": "single",
+    "question_en": "A company is building a chatbot by using generative AI. The company wants to ensure that the chatbot is inclusive. Which solution will meet these requirements?",
+    "question_cn": "某公司基于生成式AI构建聊天机器人，希望确保机器人具备包容性。哪种解决方案能满足需求？",
+    "options_en": {
+      "A": "Use unbiased training data for fine-tuning.",
+      "B": "Use Amazon Fraud Detector.",
+      "C": "Use prompt templates to set up the prompt guidelines.",
+      "D": "Set up agents and use Retrieval Augmented Generation (RAG)."
+    },
+    "options_cn": {
+      "A": "使用无偏差训练数据开展模型微调",
+      "B": "启用Amazon Fraud Detector服务",
+      "C": "通过提示词模板制定提示词规范",
+      "D": "搭建智能代理并引入检索增强生成（RAG）能力"
+    },
+    "answer_en": "A",
+    "answer_cn": "A"
+  },
+  {
+    "question_id": 159,
+    "type": "single",
+    "question_en": "A company wants to deploy a generative AI application to help employees create images from text inputs. Which type of generative AI model meets this requirement?",
+    "question_cn": "某公司希望部署生成式AI应用，帮助员工基于文本输入生成图像。哪种类型的生成式AI模型能满足该需求？",
+    "options_en": {
+      "A": "Transformer-based model",
+      "B": "Multi-class classification model",
+      "C": "Regression model",
+      "D": "Diffusion model"
+    },
+    "options_cn": {
+      "A": "基于Transformer架构的模型",
+      "B": "多分类模型",
+      "C": "回归模型",
+      "D": "扩散模型"
+    },
+    "answer_en": "D",
+    "answer_cn": "D"
+  },
+  {
+    "question_id": 160,
+    "type": "single",
+    "question_en": "A research company wants to develop a text summarization application that can ingest multiple research papers and summarize the research papers. The company wants to use an Amazon Bedrock foundation model (FM). The company wants to summarize the research papers in a single model call. The FM must be able to accept large inputs in a single prompt. Which model factor should the company consider before selecting an FM for this task?",
+    "question_cn": "某研究公司希望开发文本摘要应用，可同时导入多篇研究论文并完成汇总，计划使用Amazon Bedrock的基础模型（FM），且要求通过单次模型调用完成摘要生成，模型需支持在单个提示词中接收大体积输入内容。在选择模型前，公司应重点考量模型的哪项指标？",
+    "options_en": {
+      "A": "Vocabulary size",
+      "B": "Model complexity",
+      "C": "Model latency",
+      "D": "Context window"
+    },
+    "options_cn": {
+      "A": "词汇量大小",
+      "B": "模型复杂度",
+      "C": "模型延迟",
+      "D": "上下文窗口大小"
+    },
+    "answer_en": "D",
+    "answer_cn": "D"
+  }
+]
