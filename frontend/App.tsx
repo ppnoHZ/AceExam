@@ -7,6 +7,7 @@ import QuestionDisplay from './components/QuestionDisplay';
 import { IconPlay, IconRepeat, IconX, IconCheck, IconLanguages, IconChevronLeft, IconChevronRight } from './components/Icons';
 import { useSocket } from './hooks/useSocket';
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
+import { fetchQuestions, fetchDbStats, API_BASE_URL } from './api';
 
 const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -18,17 +19,12 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (isOpsOpen) {
-      const fetchStats = async () => {
-        try {
-          const res = await fetch('http://localhost:3003/api/stats');
-          const data = await res.json();
-          setDbStats(data);
-        } catch (e) {
-          console.error("Failed to fetch stats", e);
-        }
+      const getStats = async () => {
+        const data = await fetchDbStats();
+        setDbStats(data as any);
       };
-      fetchStats();
-      const interval = setInterval(fetchStats, 5000);
+      getStats();
+      const interval = setInterval(getStats, 5000);
       return () => clearInterval(interval);
     }
   }, [isOpsOpen]);
@@ -38,7 +34,7 @@ const App: React.FC = () => {
     path: '/socket.io/aceexam'
   }), [fingerprint]);
 
-  const { emit, on, isConnected } = useSocket('http://localhost:3003', socketOptions);
+  const { emit, on, isConnected } = useSocket(API_BASE_URL, socketOptions);
 
   useEffect(() => {
     if (!isConnected) return;
@@ -99,26 +95,16 @@ const App: React.FC = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const t = translations[state.uiLanguage];
 
-  const fetchQuestions = async () => {
-    try {
-      const response = await fetch('data.json');
-      return await response.json();
-    } catch (e) {
-      console.error("Fetch failed", e);
-      return [];
-    }
-  };
-
   useEffect(() => {
     const init = async () => {
       try {
-        const savedQuestions = localStorage.getItem('aceexam_questions');
+        // const savedQuestions = localStorage.getItem('aceexam_questions');
         let questions: Question[] = [];
-        if (savedQuestions && JSON.parse(savedQuestions).length > 0) {
-          questions = JSON.parse(savedQuestions);
-        } else {
-          questions = await fetchQuestions();
-        }
+        // if (savedQuestions && JSON.parse(savedQuestions).length > 0) {
+        //   questions = JSON.parse(savedQuestions);
+        // } else {
+        questions = await fetchQuestions();
+        // }
 
         setState(prev => {
           const qCount = questions.length;
@@ -295,7 +281,7 @@ const App: React.FC = () => {
     });
   };
 
-  const handleSyncFromDataJson = async () => {
+  const handleSyncFromDb = async () => {
     if (!confirm(t.syncConfirm)) return;
     try {
       localStorage.removeItem('aceexam_questions'); 
@@ -542,7 +528,7 @@ const App: React.FC = () => {
                     <div className="text-slate-400 group-hover:text-indigo-600"><IconLanguages /></div>
                     <span className="text-[9px] font-black uppercase text-slate-500 tracking-wider">{t.uiLanguage}: {state.uiLanguage === 'cn' ? '中' : 'EN'}</span>
                   </button>
-                  <button onClick={handleSyncFromDataJson}
+                  <button onClick={handleSyncFromDb}
                     className="flex flex-col items-center gap-3 p-5 bg-slate-50 border border-slate-200 rounded-2xl hover:border-indigo-400 hover:bg-indigo-50 transition-all group">
                     <div className="text-slate-400 group-hover:text-indigo-600"><IconRepeat /></div>
                     <span className="text-[9px] font-black uppercase text-slate-500 tracking-wider">{t.syncDb}</span>

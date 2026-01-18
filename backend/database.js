@@ -110,6 +110,18 @@ class MySQLProvider {
       throw err;
     }
   }
+
+  async getAllQuestions () {
+    try {
+      const [rows] = await this.pool.execute(
+        'SELECT * FROM questions ORDER BY question_id ASC'
+      );
+      return rows;
+    } catch (err) {
+      console.error('[DB] Error getting all questions:', err);
+      throw err;
+    }
+  }
 }
 
 const dbProvider = new MySQLProvider();

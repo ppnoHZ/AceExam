@@ -31,6 +31,16 @@ app.get('/api/stats', async (req, res) => {
   }
 });
 
+app.get('/api/questions', async (req, res) => {
+  try {
+    const questions = await dbProvider.getAllQuestions();
+    res.json(questions);
+  } catch (err) {
+    console.error('[API] Error fetching questions:', err);
+    res.status(500).json({ error: 'Failed to fetch questions' });
+  }
+});
+
 // Use a Map to track unique fingerprints and their associated sockets
 const fingerprintSessions = new Map();
 
