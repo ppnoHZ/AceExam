@@ -32,11 +32,11 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Install
-        run: npm install
+        run: pnpm install
       - name: Modify index.html
         run: node ./frontend/deploy/modify.cjs
       - name: Build
-        run: npm run build -w frontend -- --base=AceExam
+        run: pnpm run build -w frontend -- --base=AceExam
         env:
           NODE_ENV: production
       - name: Copy data.json
