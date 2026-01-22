@@ -25,5 +25,7 @@ CREATE TABLE IF NOT EXISTS questions (
   options_cn JSON NOT NULL,
   answer_en VARCHAR(255) NOT NULL,
   answer_cn VARCHAR(255) NOT NULL,
+  explanation_en TEXT,
+  explanation_cn TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

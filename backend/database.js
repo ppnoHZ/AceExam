@@ -1,13 +1,13 @@
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import nodePath from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = nodePath.dirname(__filename);
 
 dotenv.config({
-  path: path.resolve(__dirname, '.env'),
+  path: nodePath.resolve(__dirname, '.env'),
   override: true,
 });
 
@@ -41,6 +41,8 @@ const SCHEMA_DDL_QUESTIONS = `
     options_cn JSON NOT NULL,
     answer_en VARCHAR(255) NOT NULL,
     answer_cn VARCHAR(255) NOT NULL,
+    explanation_en TEXT,
+    explanation_cn TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 `;
@@ -49,7 +51,7 @@ class MySQLProvider {
   constructor() {
     this.pool = mysql.createPool({
       host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT || '3306'),
+      port: Number.parseInt(process.env.DB_PORT || '3306', 10),
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
@@ -65,6 +67,21 @@ class MySQLProvider {
       // Create tables if not exists
       await this.pool.execute(SCHEMA_DDL_ANSWERS);
       await this.pool.execute(SCHEMA_DDL_QUESTIONS);
+
+      // Ensure explanation columns exist
+      try {
+        await this.pool.execute('ALTER TABLE questions ADD COLUMN IF NOT EXISTS explanation_en TEXT');
+        await this.pool.execute('ALTER TABLE questions ADD COLUMN IF NOT EXISTS explanation_cn TEXT');
+      } catch (error_) {
+        // Some older MySQL versions don't support ADD COLUMN IF NOT EXISTS
+        console.log('[DB] Checking columns manually...', error_.message);
+        const [cols] = await this.pool.execute('SHOW COLUMNS FROM questions');
+        const hasEn = cols.some(c => c.Field === 'explanation_en');
+        const hasCn = cols.some(c => c.Field === 'explanation_cn');
+        if (!hasEn) await this.pool.execute('ALTER TABLE questions ADD COLUMN explanation_en TEXT');
+        if (!hasCn) await this.pool.execute('ALTER TABLE questions ADD COLUMN explanation_cn TEXT');
+      }
+
       console.log('[DB] MySQL initialized and tables verified.');
     } catch (err) {
       console.error('[DB] Failed to initialize MySQL:', err.message);
@@ -119,6 +136,31 @@ class MySQLProvider {
       return rows;
     } catch (err) {
       console.error('[DB] Error getting all questions:', err);
+      throw err;
+    }
+  }
+
+  async getQuestionById (questionId) {
+    try {
+      const [[question]] = await this.pool.execute(
+        'SELECT * FROM questions WHERE question_id = ?',
+        [questionId]
+      );
+      return question;
+    } catch (err) {
+      console.error('[DB] Error getting question by ID:', err);
+      throw err;
+    }
+  }
+
+  async updateQuestionExplanation (questionId, explanationEn, explanationCn) {
+    try {
+      await this.pool.execute(
+        'UPDATE questions SET explanation_en = ?, explanation_cn = ? WHERE question_id = ?',
+        [explanationEn, explanationCn, questionId]
+      );
+    } catch (err) {
+      console.error('[DB] Error updating question explanation:', err);
       throw err;
     }
   }

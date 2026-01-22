@@ -21,7 +21,7 @@ This project is structured as a monorepo containing both the frontend and backen
     ```
 
 2.  **Set Environment Variables:**
-    Set the `GEMINI_API_KEY` in `frontend/.env.local` to your Gemini API key.
+    Set the `GEMINI_API_KEY` in `backend/.env` to your Gemini API key.
 
 3.  **Run the applications:**
     - To run both frontend and backend:

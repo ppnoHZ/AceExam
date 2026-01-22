@@ -39,7 +39,10 @@ export const translations = {
     allTopics: "All Topics",
     liveStats: "Live Analytics",
     onlineUsers: "Online Users",
-    opsDashboard: "Operations Dashboard"
+    opsDashboard: "Operations Dashboard",
+    aiMemoryAid: "AI Memory Aid (Gemini)",
+    aiTutorAid: "Smart Tutor Aid",
+    loadingAi: "Generating memory aid..."
   },
   cn: {
     appName: "AceExam Pro",
@@ -80,7 +83,10 @@ export const translations = {
     allTopics: "全部知识点",
     liveStats: "实时数据",
     onlineUsers: "当前在线",
-    opsDashboard: "运营界面"
+    opsDashboard: "运营界面",
+    aiMemoryAid: "AI 助记 (Gemini)",
+    aiTutorAid: "AI 智能导师助手",
+    loadingAi: "AI 正在生成助记文本..."
   }
 };
 

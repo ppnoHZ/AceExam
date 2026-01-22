@@ -18,3 +18,19 @@ export const fetchQuestions = async (): Promise<Question[]> => {
     return [];
   }
 };
+
+export const fetchMemoryAid = async (questionId: number): Promise<{ memory_aid_en: string, memory_aid_cn: string }> => {
+  const response = await fetch(`${API_BASE_URL}/api/ai/memory-aid`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ questionId }),
+  });
+  
+  if (!response.ok) {
+    throw new Error('Failed to fetch memory aid');
+  }
+  
+  return response.json();
+};

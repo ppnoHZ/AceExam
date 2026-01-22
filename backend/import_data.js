@@ -23,8 +23,9 @@ async function importData() {
       await pool.execute(
         `INSERT INTO questions (
           question_id, type, question_en, question_cn, 
-          options_en, options_cn, answer_en, answer_cn
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+          options_en, options_cn, answer_en, answer_cn,
+          explanation_en, explanation_cn
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE 
           type = VALUES(type),
           question_en = VALUES(question_en),
@@ -32,7 +33,9 @@ async function importData() {
           options_en = VALUES(options_en),
           options_cn = VALUES(options_cn),
           answer_en = VALUES(answer_en),
-          answer_cn = VALUES(answer_cn)`,
+          answer_cn = VALUES(answer_cn),
+          explanation_en = VALUES(explanation_en),
+          explanation_cn = VALUES(explanation_cn)`,
         [
           item.question_id,
           item.type,
@@ -41,7 +44,9 @@ async function importData() {
           JSON.stringify(item.options_en),
           JSON.stringify(item.options_cn),
           item.answer_en,
-          item.answer_cn
+          item.answer_cn,
+          item.explanation_en || null,
+          item.explanation_cn || null
         ]
       );
       count++;
