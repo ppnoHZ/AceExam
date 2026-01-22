@@ -23,7 +23,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   uiLang
 }) => {
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
-  const [isAnswered, setIsAnswered] = useState(false);
+  const [isAnswered, setIsAnswered] = useState(showAnswerDirectly);
   const [memoryAid, setMemoryAid] = useState<{ memory_aid_en: string, memory_aid_cn: string } | null>(null);
   const [isLoadingAid, setIsLoadingAid] = useState(false);
   const t = translations[uiLang];
@@ -33,9 +33,11 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
     setIsAnswered(showAnswerDirectly);
     setMemoryAid(null);
     setIsLoadingAid(false);
+  }, [question, showAnswerDirectly]);
 
-    // Auto-generate memory aid if showAnswerDirectly is enabled
-    if (showAnswerDirectly) {
+  // Handle auto-fetch when answer is revealed (directly or by answering)
+  useEffect(() => {
+    if ((isAnswered || showAnswerDirectly) && !memoryAid && !isLoadingAid) {
       const autoFetch = async () => {
         setIsLoadingAid(true);
         try {
@@ -49,7 +51,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
       };
       autoFetch();
     }
-  }, [question, showAnswerDirectly]);
+  }, [isAnswered, showAnswerDirectly, question.question_id, memoryAid, isLoadingAid]);
 
   const handleOptionClick = (key: string) => {
     if (isAnswered) return;
@@ -213,22 +215,25 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
                 <span className="text-xl font-black">{question.answer_en}</span>
               </div>
               <div className="flex-1 space-y-1.5">
-                <h4 className="text-[8px] font-black uppercase tracking-[0.2em] text-indigo-400">Analysis</h4>
+                <h4 className="text-[8px] font-black uppercase tracking-[0.2em] text-indigo-400">{t.analysis}</h4>
                 <div 
                   className="text-slate-200 leading-relaxed text-xs md:text-sm font-bold
                     [&_b]:text-white [&_strong]:text-white [&_b]:font-black
                     [&_code]:bg-slate-800 [&_code]:px-1 [&_code]:rounded [&_code]:text-indigo-300 [&_code]:font-mono"
                   dangerouslySetInnerHTML={{ 
-                    __html: question.explanation_en || t.explanation.replace('{key}', `<b>${question.answer_en}</b>`) 
+                    __html: (bilingualMode === 'cn' && question.explanation_cn) 
+                      ? question.explanation_cn 
+                      : (question.explanation_en || t.explanation.replace('{key}', `<b>${question.answer_en}</b>`))
                   }}
                 />
-                {question.explanation_cn && (
+                {(bilingualMode === 'both' || (bilingualMode === 'cn' && !question.explanation_cn) || (bilingualMode === 'en' && !question.explanation_en)) && question.explanation_cn && (
                   <div 
                     className="text-slate-500 leading-snug text-[10px] italic border-t border-slate-800 pt-1.5 mt-1.5
                       [&_b]:text-slate-400 [&_strong]:text-slate-400 [&_b]:font-bold"
                     dangerouslySetInnerHTML={{ __html: question.explanation_cn }}
                   />
                 )}
+                {/* Fallback for CN if only EN exists but we are in both mode - actually the above logic covers it */}
 
                 {/* AI Memory Aid Section - Enhanced UI */}
                 <div className="mt-8 pt-6 border-t border-slate-800/50">

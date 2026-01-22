@@ -40,6 +40,7 @@ export const translations = {
     liveStats: "Live Analytics",
     onlineUsers: "Online Users",
     opsDashboard: "Operations Dashboard",
+    analysis: "Analysis",
     aiMemoryAid: "AI Memory Aid (Gemini)",
     aiTutorAid: "Smart Tutor Aid",
     loadingAi: "Generating memory aid..."
@@ -84,6 +85,7 @@ export const translations = {
     liveStats: "实时数据",
     onlineUsers: "当前在线",
     opsDashboard: "运营界面",
+    analysis: "解析",
     aiMemoryAid: "AI 助记 (Gemini)",
     aiTutorAid: "AI 智能导师助手",
     loadingAi: "AI 正在生成助记文本..."
